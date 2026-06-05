@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wheel Park ROI Calculator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --surface2: #293548;
+      --border: #334155;
+      --border2: #475569;
+      --accent: #60a5fa;
+      --accent-bg: rgba(96,165,250,0.12);
+      --green: #4ade80;
+      --green-bg: rgba(74,222,128,0.10);
+      --amber: #fbbf24;
+      --amber-bg: rgba(251,191,36,0.10);
+      --t1: #f8fafc;
+      --t2: #94a3b8;
+      --t3: #64748b;
+      --display: 'Epilogue', sans-serif;
+      --mono: 'JetBrains Mono', monospace;
+      --body: 'Outfit', sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--t1); font-family: var(--body); font-size: 15px; line-height: 1.6; min-height: 100vh; }
+    .wrap { max-width: 960px; margin: 0 auto; padding: 40px 20px 80px; }
+
+    /* Header */
+    .eyebrow { font-family: var(--mono); font-size: 11px; font-weight: 500; letter-spacing: 0.14em; color: var(--accent); text-transform: uppercase; margin-bottom: 10px; }
+    h1 { font-family: var(--display); font-weight: 800; font-size: clamp(26px,5vw,40px); line-height: 1.1; margin-bottom: 12px; }
+    h1 span { color: var(--accent); }
+    .intro { font-size: 14px; color: var(--t2); max-width: 560px; line-height: 1.7; margin-bottom: 36px; }
+
+    /* Layout */
+    .grid { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1.25fr); gap: 18px; align-items: start; }
+    .results-col { display: flex; flex-direction: column; gap: 12px; }
+    @media (max-width: 640px) { .grid { grid-template-columns: 1fr; } .meth-grid { grid-template-columns: 1fr !important; } }
+
+    /* Config card */
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; }
+    .clabel { font-family: var(--mono); font-size: 10px; font-weight: 600; letter-spacing: 0.12em; color: var(--t3); text-transform: uppercase; margin-bottom: 10px; }
+    .csec { margin-bottom: 22px; }
+    .bgrp { display: flex; gap: 6px; }
+    .bgrp button { flex: 1; padding: 9px 4px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; color: var(--t2); font-family: var(--body); font-size: 12px; font-weight: 500; cursor: pointer; transition: all 0.15s; }
+    .bgrp button:hover { border-color: var(--accent); color: var(--t1); }
+    .bgrp button.sel { background: var(--accent-bg); border-color: var(--accent); color: var(--accent); }
+    .hint { margin-top: 7px; font-size: 11px; color: var(--t3); line-height: 1.5; }
+    .hint.it { font-style: italic; margin-top: 3px; }
+
+    /* Number inputs */
+    .iwrap { position: relative; }
+    .ipfx { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--t3); font-family: var(--mono); font-size: 14px; pointer-events: none; }
+    input[type="number"] { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; color: var(--t1); font-family: var(--mono); font-size: 14px; padding: 10px 12px; outline: none; transition: border-color 0.15s; -moz-appearance: textfield; }
+    input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+    input[type="number"]:focus { border-color: var(--accent); }
+    .iwrap input { padding-left: 24px; }
+
+    /* Range slider */
+    input[type="range"] { width: 100%; height: 4px; border-radius: 2px; outline: none; cursor: pointer; -webkit-appearance: none; margin: 8px 0 2px; }
+    input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: var(--accent); cursor: pointer; border: 2px solid var(--surface); transition: transform 0.15s; }
+    input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.18); }
+    input[type="range"]::-moz-range-thumb { width: 18px; height: 18px; border-radius: 50%; background: var(--accent); border: 2px solid var(--surface); cursor: pointer; }
+    .slider-row { display: flex; justify-content: space-between; align-items: baseline; margin-top: 4px; }
+    .slider-val { font-family: var(--mono); font-size: 12px; color: var(--t1); }
+    .slider-climate { font-size: 11px; color: var(--accent); font-style: italic; }
+
+    /* Action buttons */
+    .arow { display: flex; gap: 8px; margin-top: 22px; }
+    .abtn { flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 9px 8px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; color: var(--t2); font-family: var(--body); font-size: 12px; font-weight: 500; cursor: pointer; transition: all 0.15s; }
+    .abtn:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* Pillar cards */
+    .pcard { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; transition: opacity 0.22s; }
+    .pcard.off { opacity: 0.35; }
+    .pcard.off .pbody { pointer-events: none; }
+    .phdr { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; border-bottom: 1px solid var(--border); gap: 10px; }
+    .ptitle { font-family: var(--display); font-weight: 700; font-size: 14px; margin-bottom: 2px; }
+    .psub { font-size: 11px; color: var(--t3); }
+    .pbody { padding: 18px; }
+    .pval { font-family: var(--mono); font-size: 30px; font-weight: 600; margin-bottom: 5px; }
+    /* FIX: formula and source notes bumped to --t2 for readability */
+    .pform { font-family: var(--mono); font-size: 11px; color: var(--t2); margin-bottom: 14px; line-height: 1.7; word-break: break-word; overflow-wrap: anywhere; }
+    .psrc { font-size: 12px; color: var(--t2); padding-top: 12px; border-top: 1px solid var(--border); line-height: 1.65; }
+    .psrc strong { color: var(--t1); }
+    .psrc .warn { color: var(--amber); }
+
+    /* Confidence badges */
+    .badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 8px; border-radius: 20px; font-family: var(--mono); font-size: 10px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; white-space: nowrap; }
+    .badge.g { background: var(--green-bg); color: var(--green); border: 1px solid rgba(74,222,128,0.2); }
+    .badge.a { background: var(--amber-bg); color: var(--amber); border: 1px solid rgba(251,191,36,0.2); }
+    .bdot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+
+    /* Toggle — white thumb in both states */
+    .trow { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .tog { width: 34px; height: 18px; border-radius: 9px; background: var(--border2); position: relative; cursor: pointer; transition: background 0.2s; flex-shrink: 0; }
+    .tog::after { content: ''; position: absolute; width: 12px; height: 12px; border-radius: 50%; background: white; top: 3px; left: 3px; transition: all 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.35); }
+    .tog.on { background: var(--green); }
+    .tog.on::after { left: 19px; }
+
+    /* Summary card — accent top border to stand out as key result */
+    .scard { background: var(--surface); border: 1px solid var(--border); border-top: 2px solid var(--accent); border-radius: 12px; padding: 20px; }
+    .slabel { font-family: var(--mono); font-size: 10px; font-weight: 600; letter-spacing: 0.12em; color: var(--t3); text-transform: uppercase; margin-bottom: 6px; }
+    .stotal { font-family: var(--mono); font-size: 38px; font-weight: 600; color: var(--accent); margin-bottom: 4px; line-height: 1; }
+    .ssub { font-size: 11px; color: var(--t3); margin-bottom: 18px; }
+    .metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+    .metric { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 12px; }
+    .mlabel { font-size: 11px; color: var(--t3); margin-bottom: 4px; }
+    .mval { font-family: var(--mono); font-size: 20px; font-weight: 600; }
+    .barrow { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 10px; color: var(--t3); margin-bottom: 6px; }
+    .barbg { height: 5px; background: var(--border); border-radius: 3px; overflow: hidden; }
+    /* FIX: bar fill now uses --accent (blue) instead of --green */
+    .barfill { height: 100%; background: var(--accent); border-radius: 3px; transition: width 0.45s ease; width: 0%; }
+
+    /* Methodology */
+    .meth { margin-top: 18px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; }
+    .mtitle { font-family: var(--mono); font-size: 10px; font-weight: 600; letter-spacing: 0.12em; color: var(--t3); text-transform: uppercase; margin-bottom: 18px; }
+    .meth-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+    .mitem { display: flex; gap: 12px; }
+    .mbadge { flex-shrink: 0; width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 11px; font-weight: 600; }
+    .mbadge.g { background: var(--green-bg); color: var(--green); }
+    .mbadge.a { background: var(--amber-bg); color: var(--amber); }
+    .mname { font-size: 13px; font-weight: 500; margin-bottom: 5px; }
+    .mtext { font-size: 12px; color: var(--t2); line-height: 1.65; }
+
+    /* Print */
+    @media print {
+      body { background: #fff !important; color: #111; }
+      .arow { display: none !important; }
+      .card, .pcard, .scard, .meth { background: #fff !important; border: 1px solid #ddd !important; }
+      .scard { border-top: 2px solid #1d4ed8 !important; }
+      .metric { background: #f7f7f7 !important; border: 1px solid #ddd !important; }
+      .barbg { background: #e5e5e5 !important; }
+      .pval, .mval { color: #111 !important; }
+      .stotal { color: #1d4ed8 !important; }
+      .barfill { background: #1d4ed8 !important; }
+      h1 { color: #111 !important; }
+      h1 span { color: #1d4ed8 !important; }
+      .pform, .psrc { color: #444 !important; }
+      .badge.g { background: #dcfce7 !important; color: #166534 !important; }
+      .badge.a { background: #fef3c7 !important; color: #92400e !important; }
+      .tog, input[type="range"] { display: none !important; }
+      .slider-climate { color: #1d4ed8 !important; }
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <div style="margin-bottom:36px;">
+    <p class="eyebrow">Municipal investment tool</p>
+    <h1>Wheel Park <span>ROI</span> Calculator</h1>
+    <p class="intro">Estimate the economic return of a public skatepark, pump track, or combined wheel park. Built for advocates presenting to city councils, parks departments, and planning committees. Toggle pillars on or off to match the case you're making.</p>
+  </div>
+
+  <div class="grid">
+
+    <div class="card">
+
+      <div class="csec">
+        <p class="clabel">Facility type</p>
+        <div class="bgrp">
+          <button data-t="pump_track" onclick="setType('pump_track')" class="sel">Pump track</button>
+          <button data-t="skatepark"  onclick="setType('skatepark')">Skatepark</button>
+          <button data-t="wheel_park" onclick="setType('wheel_park')">Combined</button>
+        </div>
+      </div>
+
+      <div class="csec">
+        <p class="clabel">Facility scale</p>
+        <div class="bgrp">
+          <button data-s="neighborhood" onclick="setScale('neighborhood')" class="sel">Neighborhood</button>
+          <button data-s="regional"     onclick="setScale('regional')">Regional</button>
+          <button data-s="destination"  onclick="setScale('destination')">Destination</button>
+        </div>
+        <p class="hint" id="shint"></p>
+      </div>
+
+      <div class="csec">
+        <p class="clabel">Construction cost</p>
+        <div class="iwrap">
+          <span class="ipfx">$</span>
+          <input type="number" id="cost" oninput="recalc()" placeholder="0">
+        </div>
+        <p class="hint" id="chint"></p>
+      </div>
+
+      <div class="csec">
+        <p class="clabel">Daily users <span style="font-family:var(--mono);font-size:9px;color:var(--amber);background:var(--amber-bg);padding:1px 5px;border-radius:3px;vertical-align:1px;">P2 input</span></p>
+        <input type="number" id="users" oninput="recalc()" placeholder="0">
+        <p class="hint" id="uhint"></p>
+        <p class="hint it">Drives visitor spending (P2) only — not used in P1</p>
+      </div>
+
+      <div class="csec">
+        <p class="clabel">Operating days / year</p>
+        <input type="range" id="opdays" min="180" max="365" step="5" value="300" oninput="updateSlider()">
+        <div class="slider-row">
+          <span class="slider-val" id="opdays-val">300 days/yr</span>
+          <span class="slider-climate" id="opdays-climate"></span>
+        </div>
+      </div>
+
+      <div class="arow">
+        <button class="abtn" onclick="doPrint()">&#8659;&nbsp;Download PDF</button>
+        <button class="abtn" id="lbtn" onclick="doLink()">&#128279;&nbsp;Copy link</button>
+      </div>
+
+    </div>
+
+    <div class="results-col">
+
+      <div class="pcard" id="p1c">
+        <div class="phdr">
+          <div style="min-width:0;">
+            <p class="ptitle">Direct user economic surplus</p>
+            <p class="psub">Consumer willingness-to-pay value</p>
+          </div>
+          <div class="trow">
+            <span class="badge g"><span class="bdot"></span>High confidence</span>
+            <span class="tog on" id="p1t" role="switch" aria-checked="true" aria-label="Toggle pillar 1" tabindex="0"
+              onclick="togP('p1')" onkeydown="if(event.key==='Enter'||event.key===' ')togP('p1')"></span>
+          </div>
+        </div>
+        <div class="pbody">
+          <div class="pval" id="p1v">—</div>
+          <div class="pform" id="p1f"></div>
+          <div class="psrc">
+            <strong>Source:</strong> Kemp (2025), <em>Journal of Economic Analysis</em> — Travel Cost Model,
+            Lauridsen Skatepark, Des Moines IA. Baseline: $488K/yr from a $6.2M facility (7.9%/yr). Rates
+            here (3–7.2%) are scaled down for smaller or less destination-oriented facilities, reflecting lower
+            travel-cost surplus per user. P1 is driven by construction cost, not user count.
+          </div>
+        </div>
+      </div>
+
+      <div class="pcard" id="p2c">
+        <div class="phdr">
+          <div style="min-width:0;">
+            <p class="ptitle">Visitor &amp; tourism spending</p>
+            <p class="psub">Out-of-town visitor economic impact</p>
+          </div>
+          <div class="trow">
+            <span class="badge a"><span class="bdot"></span>MTB proxy</span>
+            <span class="tog on" id="p2t" role="switch" aria-checked="true" aria-label="Toggle pillar 2" tabindex="0"
+              onclick="togP('p2')" onkeydown="if(event.key==='Enter'||event.key===' ')togP('p2')"></span>
+          </div>
+        </div>
+        <div class="pbody">
+          <div class="pval" id="p2v">—</div>
+          <div class="pform" id="p2f"></div>
+          <div class="psrc">
+            <strong class="warn">Mountain bike tourism proxy data.</strong> Visitor spending benchmarks from
+            Whistler Bikepark and NW Arkansas studies ($94–$133/day range). No equivalent peer-reviewed dataset
+            exists for pump tracks or skateparks. Visitor fractions (1.5–4%) are intentionally conservative.
+            Multiplier: 1.72&times; (OIA, 2022).
+          </div>
+        </div>
+      </div>
+
+      <div class="scard">
+        <p class="slabel">Combined annual value</p>
+        <div class="stotal" id="stot">—</div>
+        <p class="ssub">per year &middot; community economic value, not municipal revenue</p>
+        <div class="metrics">
+          <div class="metric">
+            <p class="mlabel">Value recovery</p>
+            <p class="mval" id="spb">—</p>
+          </div>
+          <div class="metric">
+            <p class="mlabel">Annual return</p>
+            <p class="mval" id="sret">—</p>
+          </div>
+        </div>
+        <div class="barrow">
+          <span>Value recovery progress (20-yr horizon)</span>
+          <span id="bpct">—</span>
+        </div>
+        <div class="barbg"><div class="barfill" id="bfill"></div></div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="meth">
+    <p class="mtitle">Methodology notes</p>
+    <div class="meth-grid">
+      <div class="mitem">
+        <div class="mbadge g">P1</div>
+        <div>
+          <p class="mname">High confidence — peer-reviewed</p>
+          <p class="mtext">P1 = construction cost &times; annual surplus rate. Kemp (2025) Lauridsen
+          baseline: $488K/yr from $6.2M = 7.9%/yr. Rates here (3–7.2%) are scaled down for smaller
+          facilities: neighborhood parks serve mostly local users whose near-zero travel costs generate
+          minimal TCM-measured surplus. Destination facilities approach the Lauridsen ratio. P1 is
+          independent of daily user count.</p>
+        </div>
+      </div>
+      <div class="mitem">
+        <div class="mbadge a">P2</div>
+        <div>
+          <p class="mname">Medium confidence — proxy data</p>
+          <p class="mtext">P2 = daily users &times; visitor fraction (1.5–4%, ascending by scale) &times;
+          operating days &times; proxy daily spend &times; 1.72&times; multiplier (OIA, 2022). Operating
+          days are adjustable to reflect local climate: 340+ days for mild climates (GA, TX, FL),
+          ~300 for temperate (CO, PA, NC), ~265 for northern (MN, WI, NY), ~220 for harsh winters
+          (ND, MT, AK). Spending benchmarks from mountain bike tourism research — no equivalent dataset
+          exists for wheeled sport parks. <strong style="color:var(--t1);">Income adjustment:</strong> MTB
+          participant households skew above $75K median income vs. ~$54K for skateboarding (NSGA survey
+          data); pump track visitor spend estimates are set higher to reflect the MTB-family demographic,
+          while skatepark estimates are reduced accordingly. Wheel park figures split the difference.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+<script>
+const OIA = 1.72;
+const D = {
+  pump_track: {
+    neighborhood:{cost:75000,   users:25,  vP:.015, vS:22, sR:.030,
+      cH:'Benchmark: $50K–$120K',   uH:'Typical range: 15–50 users/day',   sH:'Small asphalt or modular pump track · Neighborhood community use'},
+    regional:    {cost:200000,  users:60,  vP:.025, vS:58, sR:.048,
+      cH:'Benchmark: $150K–$300K',  uH:'Typical range: 40–100 users/day',  sH:'Mid-size asphalt pump track · Regional draw from surrounding area'},
+    destination: {cost:450000,  users:120, vP:.032, vS:85, sR:.060,
+      cH:'Benchmark: $350K–$600K',  uH:'Typical range: 80–200 users/day',  sH:'Competition-grade pump track · Regional or national draw'}
+  },
+  skatepark: {
+    neighborhood:{cost:275000,  users:40,  vP:.018, vS:20, sR:.035,
+      cH:'Benchmark: $150K–$400K',  uH:'Typical range: 25–70 users/day',   sH:'5,000–8,000 sq ft · Neighborhood concrete park'},
+    regional:    {cost:550000,  users:80,  vP:.030, vS:48, sR:.055,
+      cH:'Benchmark: $450K–$750K',  uH:'Typical range: 60–120 users/day',  sH:'10,000–15,000 sq ft · Regional facility with destination draw'},
+    destination: {cost:1200000, users:150, vP:.040, vS:72, sR:.072,
+      cH:'Benchmark: $900K–$1.5M',  uH:'Typical range: 100–300 users/day', sH:'20,000+ sq ft · Destination-grade (Lauridsen scale comparison)'}
+  },
+  wheel_park: {
+    neighborhood:{cost:350000,  users:55,  vP:.018, vS:22, sR:.032,
+      cH:'Benchmark: $250K–$450K',  uH:'Typical range: 35–85 users/day',   sH:'Combined skatepark + pump track · Multi-discipline neighborhood hub'},
+    regional:    {cost:750000,  users:105, vP:.030, vS:52, sR:.052,
+      cH:'Benchmark: $600K–$950K',  uH:'Typical range: 75–160 users/day',  sH:'Mid-size combined facility · Regional multi-discipline draw'},
+    destination: {cost:1800000, users:250, vP:.038, vS:82, sR:.068,
+      cH:'Benchmark: $1.4M–$2.5M',  uH:'Typical range: 180–400 users/day', sH:'Full wheel park complex · Major regional destination'}
+  }
+};
+
+let cT='pump_track', cS='neighborhood', p1on=true, p2on=true;
+
+function fs(n){ if(!n||n<=0)return '—'; if(n>=1e6)return '$'+(n/1e6).toFixed(2)+'M'; if(n>=1000)return '$'+Math.round(n/1000)+'K'; return '$'+Math.round(n); }
+function ff(n){ return '$'+Math.round(n).toLocaleString(); }
+function fc(n){ if(n>=1e6)return '$'+(n/1e6).toFixed(n%1e6===0?0:2)+'M'; return '$'+Math.round(n/1000)+'K'; }
+function getOD(){ return parseInt(document.getElementById('opdays').value)||300; }
+
+function climateLabel(d){
+  if(d>=340)return 'Mild climate (e.g., GA, TX, CA, FL)';
+  if(d>=300)return 'Temperate (e.g., CO, PA, OR, NC)';
+  if(d>=260)return 'Northern (e.g., MN, WI, NY, WA)';
+  return 'Cold / harsh winters (e.g., ND, MT, AK)';
+}
+
+function syncSlider(){
+  const sl=document.getElementById('opdays');
+  const val=parseInt(sl.value), mn=parseInt(sl.min), mx=parseInt(sl.max);
+  const pct=((val-mn)/(mx-mn))*100;
+  sl.style.background=`linear-gradient(to right,var(--accent) ${pct}%,var(--border) ${pct}%)`;
+  document.getElementById('opdays-val').textContent=val+' days/yr';
+  document.getElementById('opdays-climate').textContent=climateLabel(val);
+}
+
+function updateSlider(){ syncSlider(); recalc(); }
+
+function setType(t){
+  cT=t;
+  document.querySelectorAll('[data-t]').forEach(b=>b.classList.remove('sel'));
+  document.querySelector('[data-t="'+t+'"]').classList.add('sel');
+  load();
+}
+function setScale(s){
+  cS=s;
+  document.querySelectorAll('[data-s]').forEach(b=>b.classList.remove('sel'));
+  document.querySelector('[data-s="'+s+'"]').classList.add('sel');
+  load();
+}
+function load(){
+  const d=D[cT][cS];
+  document.getElementById('cost').value =d.cost;
+  document.getElementById('users').value=d.users;
+  document.getElementById('chint').textContent=d.cH;
+  document.getElementById('uhint').textContent=d.uH;
+  document.getElementById('shint').textContent=d.sH;
+  recalc();
+}
+function togP(id){
+  const tog=document.getElementById(id+'t'), card=document.getElementById(id+'c');
+  const on=tog.classList.toggle('on');
+  tog.setAttribute('aria-checked',on);
+  card.classList.toggle('off',!on);
+  if(id==='p1')p1on=on; else p2on=on;
+  recalc();
+}
+function recalc(){
+  const d=D[cT][cS];
+  const cost=parseFloat(document.getElementById('cost').value)||0;
+  const usr =parseFloat(document.getElementById('users').value)||0;
+  const od  =getOD();
+
+  const p1=cost*d.sR;
+  document.getElementById('p1v').textContent=fs(p1);
+  document.getElementById('p1f').textContent=
+    fc(cost)+' \u00d7 '+(d.sR*100).toFixed(1)+'% surplus rate = '+ff(p1)+'/yr  \u00b7  scaled from Kemp $488K / $6.2M baseline';
+
+  const vdays=Math.round(usr*d.vP*od);
+  const p2=vdays*d.vS*OIA;
+  document.getElementById('p2v').textContent=fs(p2);
+  document.getElementById('p2f').textContent=
+    (d.vP*100).toFixed(1)+'% of '+usr+' users \u00d7 '+od+' days = '+
+    vdays.toLocaleString()+' visitor-days/yr  \u00d7  $'+d.vS+'/day  \u00d7  1.72\u00d7  =  '+ff(p2)+'/yr';
+
+  const total=(p1on?p1:0)+(p2on?p2:0);
+  document.getElementById('stot').textContent=total>0?ff(total):'—';
+
+  if(total>0&&cost>0){
+    const pb=cost/total, ret=Math.round((total/cost)*100);
+    document.getElementById('spb').textContent =pb<1?'< 1 yr':pb.toFixed(1)+' yrs';
+    document.getElementById('sret').textContent=ret+'%/yr';
+    const pct=Math.min(100,Math.max(0,Math.round(((20-pb)/20)*100)));
+    document.getElementById('bfill').style.width=pct+'%';
+    document.getElementById('bpct').textContent=pct+'% within 20 yrs';
+  } else {
+    ['spb','sret'].forEach(i=>document.getElementById(i).textContent='—');
+    document.getElementById('bfill').style.width='0%';
+    document.getElementById('bpct').textContent='—';
+  }
+
+  try{
+    history.replaceState(null,'','#'+[cT,cS,
+      document.getElementById('cost').value,
+      document.getElementById('users').value,
+      od].join('-'));
+  }catch(e){}
+}
+
+function parseHash(){
+  try{
+    const h=window.location.hash.slice(1); if(!h)return false;
+    const[t,s,c,u,od]=h.split('-');
+    if(!D[t]||!D[t][s])return false;
+    cT=t; cS=s;
+    document.querySelectorAll('[data-t]').forEach(b=>b.classList.remove('sel'));
+    document.querySelector('[data-t="'+t+'"]').classList.add('sel');
+    document.querySelectorAll('[data-s]').forEach(b=>b.classList.remove('sel'));
+    document.querySelector('[data-s="'+s+'"]').classList.add('sel');
+    const d=D[t][s];
+    document.getElementById('cost').value =c||d.cost;
+    document.getElementById('users').value=u||d.users;
+    if(od){const v=Math.round(parseInt(od)/5)*5; document.getElementById('opdays').value=Math.min(365,Math.max(180,v));}
+    document.getElementById('chint').textContent=d.cH;
+    document.getElementById('uhint').textContent=d.uH;
+    document.getElementById('shint').textContent=d.sH;
+    return true;
+  }catch(e){return false;}
+}
+
+function doLink(){
+  const c=document.getElementById('cost').value, u=document.getElementById('users').value;
+  const url=window.location.href.split('#')[0]+'#'+[cT,cS,c,u,getOD()].join('-');
+  const btn=document.getElementById('lbtn'), orig=btn.innerHTML;
+  const done=()=>{btn.textContent='✓ Copied!'; setTimeout(()=>btn.innerHTML=orig,2200);};
+  if(navigator.clipboard){navigator.clipboard.writeText(url).then(done).catch(()=>prompt('Copy this link:',url));}
+  else prompt('Copy this link:',url);
+}
+
+function doPrint(){ window.print(); }
+
+if(!parseHash())load(); else recalc();
+syncSlider();
+</script>
+</body>
+</html>
