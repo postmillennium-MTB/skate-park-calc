@@ -1,297 +1,483 @@
-# Wheel Park ROI Calculator — Methodology & Configuration Reference
-
-**Version:** Current  
-**Purpose:** Municipal investment advocacy for public skateparks, pump tracks, and combined wheel parks  
-**Audience:** City councils, parks and recreation departments, municipal planners, community advocates
-
----
-
-## Overview
-
-The Wheel Park ROI Calculator estimates the annual economic return of a publicly funded wheeled sport facility. It produces two distinct economic value estimates — one anchored to peer-reviewed academic research, one derived from proxy data with documented limitations — that together form a defensible floor-level investment case.
-
-**What the output represents:** Both pillars estimate *community economic value*, not municipal tax receipts, not direct facility revenue, and not return on investment in a commercial sense. The "value recovery" metric shows how long it takes for cumulative community economic benefit to equal the facility's construction cost. These figures are appropriate for public-good infrastructure framing before a council — they are not cash flow projections.
-
-**Conservative positioning:** All estimates are intentionally calibrated toward the lower end of what the supporting literature could justify. Advocates should present these as conservative floor estimates, not ceiling claims.
-
----
-
-## Pillar 1 — Direct User Economic Surplus
-
-### What it measures
-
-The economic value that facility users derive from visiting, measured as their willingness to pay above and beyond their actual travel costs. This is distinct from visitor spending (Pillar 2) — it is a measure of *benefit received*, not *dollars circulated*.
-
-### Formula
-
-```
-P1 = Construction Cost × Annual Surplus Rate
-```
-
-### Derivation
-
-P1 is anchored to the only peer-reviewed Travel Cost Model (TCM) study of a public skatepark facility:
-
-> Kemp, J. (2025). Estimating the user benefits associated with large public skateparks.
-> *Journal of Economic Analysis*, 4(1), 66–82.
-> https://www.anserpress.org/journal/jea/4/1/90
-
-**Kemp (2025) baseline — Lauridsen Skatepark, Des Moines, Iowa:**
-- Facility size: 88,000 sq ft (largest public skatepark in the United States at time of study)
-- Estimated construction cost: approximately $6.2 million
-- Annual consumer surplus (adults): $488,000
-- Per-adult-user-day benefit: $61
-- Implied annual surplus rate: $488,000 ÷ $6,200,000 = **7.9% per year**
-
-The Travel Cost Model establishes user benefit by analyzing the relationship between a visitor's travel distance and frequency of visits. Users who travel further incur higher costs but still choose to visit, revealing their willingness to pay. The $61 figure is a TCM-derived consumer surplus — not an admission fee, but a revealed-preference measure of value received per adult user-day.
-
-### Scaling logic
-
-The Lauridsen is an exceptional facility: the largest of its kind in the country, generating national destination draw. Smaller or less destination-oriented facilities produce proportionally lower surplus per construction dollar because:
-
-1. Most of their users travel short distances, generating near-zero TCM-measured travel-cost surplus
-2. Less unique or specialized facilities attract fewer willing-to-travel visitors
-
-Annual surplus rates applied in the calculator range from 3.0% to 7.2%, all set at or below the Lauridsen's 7.9% baseline. The destination skatepark rate of 7.2% is set slightly below the Lauridsen to reflect that even large regional destination skateparks are unlikely to match that facility's exceptional national profile.
-
-**P1 is driven by construction cost, not daily user count.** The "estimated daily users" input field does not affect Pillar 1. Changing that field only affects Pillar 2.
-
-### Limitation
-
-The Kemp (2025) Lauridsen study is the *only* peer-reviewed TCM analysis of a public skatepark. Applying its framework to pump tracks and wheel parks requires analogy by facility type — no direct TCM study of pump tracks exists. This should be acknowledged when presenting P1 for non-skatepark configurations.
-
----
-
-## Pillar 2 — Visitor & Tourism Spending
-
-### What it measures
-
-The economic activity generated in the local economy by out-of-town visitors whose trip is primarily or partly motivated by the facility. This is expressed in direct community dollars — the actual spending on gas, food, lodging, and retail by non-local visitors, amplified by a standard economic multiplier.
-
-### Formula
-
-```
-P2 = Daily Users × Visitor Fraction × Operating Days × Daily Visitor Spend × Economic Multiplier (1.72×)
-```
-
-### Source data
-
-No peer-reviewed visitor spending study exists for public skateparks or pump tracks. P2 uses mountain bike tourism proxy data as the nearest available benchmark:
-
-- Whistler Bikepark visitor studies: $94–$133 per visitor per day
-- Northwest Arkansas cycling tourism study: $159.4 million annual economic impact from bicycle tourism; $416 average spending per destination trip (Trust for Public Land, 2025)
-- Economic multiplier: $1.72 per $1 of direct outdoor recreation visitor spending (Outdoor Industry Association, 2022)
-
-These are structurally similar facilities (destination-grade active recreation, purpose-driven travel), but they reflect a higher-income participant population than skateboarding. A downward income adjustment is applied as described below.
-
-### Visitor fraction rationale
-
-Visitor fractions range from 1.5% (small neighborhood pump track) to 4.0% (destination skatepark). These are intentionally conservative. For comparison, major MTB trail networks routinely report 30–60% of users as out-of-town visitors. Wheeled sport facilities are generally not the sole driver of travel in the way that a Whistler or Moab destination is; the fractions here reflect a more realistic subset of daily users making purpose-driven trips from outside the local area.
-
-### Income adjustment — why pump tracks and skateparks use different spend values
-
-A documented income differential exists between mountain bike and skateboarding participant populations:
-
-**Mountain biking (higher income):**
-Over 50% of mountain bike participants in the United States come from households earning $75,000 or more per year. The high cost of entry — capable trail bikes range from $2,000 to $8,000+ — creates a natural income filter.
-
-> Sources:
-> - SHRED TRAIL / OIA Outdoor Participation Survey data:
->   https://shredtrail.com/mountain-biking-statistics/
-> - Singletracks.com reader demographics study (households earning $100K+ over-represented vs. U.S. population)
-> - American Trails, "Mountain Bicycling in Wisconsin: Surveyed and Analyzed" (54%+ of respondents earning above $50K, higher than local demographic baseline):
->   https://www.americantrails.org/resources/mountain-bicycling-in-wisconsin-surveyed-and-analyzed
-
-**Skateboarding (near national median):**
-Skateboarding participant household income is near or slightly below the national median (~$54,000), distributed broadly across income brackets rather than concentrated at the upper end. Skateboarding ranks in the bottom 10 of all tracked recreational activities by participant median household income.
-
-> Sources:
-> - National Sporting Goods Association (NSGA) sports participation by household income survey, summarized in:
->   Sports Destinations Management (2013). "Connecting Sports Participation with Household Income."
->   https://www.sportsdestinations.com/management/economics/nsga-study-8221
-> - Tony Hawk Foundation / ERIC (2020). *Beyond the Board: Findings from the Field.*
->   Survey of 5,717 respondents; financial issues cited as top concern by 74% of skaters under 26.
->   https://files.eric.ed.gov/fulltext/ED609263.pdf
-
-**Application in the calculator:**
-Because visitor spending scales with disposable income, pump track visitor spend estimates are set *above* the MTB proxy mid-range to reflect the MTB-family demographic that pump tracks primarily attract, while skatepark estimates are reduced below the proxy range to reflect the broader and lower-income skateboarding demographic. Combined wheel park figures split the difference, reflecting their mixed-discipline audience.
-
-The MTB proxy range from source studies is $94–$133 per visitor per day. Spend values in the calculator range from $20 (neighborhood skatepark) to $85 (destination pump track), representing substantial discounts from that range at all tiers.
-
-### Operating days
-
-Default is 300 days per year. The slider allows adjustment from 180 to 365 days in 5-day increments to reflect local climate:
-
-| Days | Climate context |
-|---|---|
-| 340–365 | Mild (GA, TX, CA, FL) |
-| 300–339 | Temperate (CO, PA, OR, NC) |
-| 260–299 | Northern (MN, WI, NY, WA) |
-| 180–259 | Cold / harsh winters (ND, MT, AK) |
-
----
-
-## Configuration Parameters — All 9 Presets
-
-The table below lists every parameter for each facility type and scale combination. Users may override the **construction cost** and **daily users** fields for their specific project; all other parameters (sR, vP, vS) are preset per configuration.
-
-| Facility Type | Scale | Default Cost | Default Users/day | Surplus Rate (sR) | Visitor Fraction (vP) | Visitor Spend/day (vS) |
-|---|---|---:|---:|---:|---:|---:|
-| Pump track | Neighborhood | $75,000 | 25 | 3.0% | 1.5% | $22 |
-| Pump track | Regional | $200,000 | 60 | 4.8% | 2.5% | $58 |
-| Pump track | Destination | $450,000 | 120 | 6.0% | 3.2% | $85 |
-| Skatepark | Neighborhood | $275,000 | 40 | 3.5% | 1.8% | $20 |
-| Skatepark | Regional | $550,000 | 80 | 5.5% | 3.0% | $48 |
-| Skatepark | Destination | $1,200,000 | 150 | 7.2% | 4.0% | $72 |
-| Combined wheel park | Neighborhood | $350,000 | 55 | 3.2% | 1.8% | $22 |
-| Combined wheel park | Regional | $750,000 | 105 | 5.2% | 3.0% | $52 |
-| Combined wheel park | Destination | $1,800,000 | 250 | 6.8% | 3.8% | $82 |
-
-**Column definitions:**
-
-- **sR (Surplus Rate):** Annual surplus rate applied to construction cost for P1. Derived from Kemp (2025) Lauridsen baseline of 7.9%/yr, scaled down by facility size and destination-draw characteristics.
-- **vP (Visitor Fraction):** Percentage of daily users estimated to be out-of-town visitors for P2 calculation. Conservative relative to MTB destination benchmarks.
-- **vS (Visitor Spend/day):** Estimated average daily spending by an out-of-town visitor (gas, food, lodging, retail). Adjusted from MTB proxy data for income demographic differences between facility types.
-
-### Scale definitions
-
-**Neighborhood:** Primarily serves local residents within a short travel radius. Users arrive on foot, by bike, or by short car trip. Very low visitor fraction; near-zero travel-cost surplus in TCM terms. Benchmark construction costs reflect modest asphalt pump tracks ($50K–$120K) or small concrete skateparks ($150K–$400K).
-
-**Regional:** Serves a multi-town or multi-county area. Meaningful destination draw from surrounding communities; a mix of local daily users and regional day-trip visitors. Benchmark costs reflect mid-size asphalt pump tracks ($150K–$300K) or 10,000–15,000 sq ft concrete skateparks ($450K–$750K).
-
-**Destination:** Purpose-driven travel from a broad geographic region. Competition-grade or landmark facilities that function as a primary reason for travel. Visitor spend approaches the MTB proxy benchmark range. Benchmark costs: $350K–$600K for competition-grade pump tracks; $900K–$1.5M for large destination skateparks.
-
----
-
-## Default Value Recovery — Reference Table
-
-The following payback estimates assume both pillars are active and operating days are set to 300. Payback will increase (longer) when operating days are reduced.
-
-| Facility Type | Scale | Approx. Value Recovery |
-|---|---|---|
-| Pump track | Neighborhood | ~11.5 years |
-| Pump track | Regional | ~3.7 years |
-| Pump track | Destination | ~2.3 years |
-| Skatepark | Neighborhood | ~16.1 years |
-| Skatepark | Regional | ~6.1 years |
-| Skatepark | Destination | ~3.9 years |
-| Combined wheel park | Neighborhood | ~15.6 years |
-| Combined wheel park | Regional | ~6.1 years |
-| Combined wheel park | Destination | ~3.4 years |
-
-The faster payback for pump tracks vs. skateparks at equivalent scale is a direct result of the income-adjusted visitor spend values — pump tracks draw more from the higher-spending MTB family demographic.
-
----
-
-## Worked Example
-
-**Scenario:** A mid-size city proposes a $550,000 regional skatepark. Expected daily users: 80. Climate is temperate (300 operating days).
-
-**P1 — Direct User Economic Surplus:**
-- Formula: $550,000 × 5.5% = **$30,250/year**
-- Interpretation: The community receives $30,250 annually in user economic surplus, equivalent to 5.5% of the capital invested, anchored to the Kemp (2025) Lauridsen baseline.
-
-**P2 — Visitor & Tourism Spending:**
-- Visitor-days: 80 users × 3.0% visitor fraction × 300 days = 720 visitor-days/year
-- Gross spend: 720 × $48/day = $34,560
-- With multiplier: $34,560 × 1.72 = **$59,443/year**
-- Interpretation: Out-of-town visitors generate approximately $59,000 in annual local economic activity. Based on mountain bike tourism proxy data, adjusted downward for skateboarding demographics.
-
-**Combined:**
-- Total annual value: $30,250 + $59,443 = **$89,693/year**
-- Value recovery: $550,000 ÷ $89,693 = **6.1 years**
-- Annual return on construction cost: 16%
-
----
-
-## Complete Source List
-
-**Primary study — P1 anchor:**
-
-Kemp, J. (2025). Estimating the user benefits associated with large public skateparks.
-*Journal of Economic Analysis*, 4(1), 66–82.
-https://www.anserpress.org/journal/jea/4/1/90
-
-**Supporting literature — wheeled sport economics:**
-
-Glenney, B., Bjorke, I., & Buchetti, A. (2024). Skateboarding and the surplus value of city play.
-*Frontiers in Sports and Active Living*, 6, Article 1454274.
-https://doi.org/10.3389/fspor.2024.1454274
-
-Todd, M., & Archer, M. (2025). A different gravitation: acceptance of authentic selves, becoming through
-doing, and support through connection within a Highland skatepark. *Leisure Studies*, 1–17.
-https://doi.org/10.1080/02614367.2025.2467749
-
-Kilberth, V. (2025). Spaces for skateboarding in the city — new spatial concepts beyond skateparks.
-*Frontiers in Sports and Active Living*, 6, Article 1457427.
-https://doi.org/10.3389/fspor.2024.1457427
-
-**Visitor spending & economic multiplier:**
-
-Outdoor Industry Association. (2022). *Outdoor Participation Trends Report.*
-Economic multiplier: $1.72 per $1 of direct visitor spending in local communities.
-
-Trust for Public Land. (2025). Mountain bike trail economic impact data.
-Average visitor spending: $416 per destination trip. Trail networks supporting up to 1,626 jobs
-and $54.1 million in annual labor income across 13 locations.
-
-Whistler Bikepark visitor studies. Cited range: $94–$133 per visitor per day.
-(Referenced via Northwest Arkansas cycling tourism economic studies.)
-
-**Cycling infrastructure health & social ROI:**
-
-Macmillan, A., Connor, J., Witten, K., Kearns, R., Rees, D., & Woodward, A. (2014). The societal costs
-and benefits of commuter bicycling: Simulating the effects of specific policies using system dynamics
-modeling. *Environmental Health Perspectives*, 122(4), 335–344.
-https://doi.org/10.1289/ehp.1307250
-
-Sport New Zealand. Social Return on Investment study: $2.12 social return per $1 spent on
-recreational physical activity.
-
-**Demographic & income data:**
-
-National Sporting Goods Association (NSGA). Sports participation by household income survey.
-Summarized in: Sports Destinations Management (2013). Connecting Sports Participation with
-Household Income.
-https://www.sportsdestinations.com/management/economics/nsga-study-8221
-
-Tony Hawk Foundation / ERIC. (2020). *Beyond the Board: Findings from the Field.*
-Survey of 5,717 skateboarding respondents; income distribution and demographic data.
-https://files.eric.ed.gov/fulltext/ED609263.pdf
-
-SHRED TRAIL / Outdoor Industry Association. Mountain biking household income demographics.
-~50% of participants from households earning $75,000+.
-https://shredtrail.com/mountain-biking-statistics/
-
-American Trails. Mountain Bicycling in Wisconsin: Surveyed and Analyzed.
-54%+ of surveyed MTB participants reporting household income above $50,000;
-higher income, educational attainment, and managerial occupations vs. local demographics.
-https://www.americantrails.org/resources/mountain-bicycling-in-wisconsin-surveyed-and-analyzed
-
-**Construction cost benchmarks:**
-
-Public Skatepark Development Guide / Tony Hawk Foundation.
-$50–$75 per square foot for outdoor concrete skateparks; neighborhood park (10,000 sf) ~$500,000.
-https://publicskateparkguide.org
-
-**Crime reduction & anti-social behavior data:**
-
-Tony Hawk Foundation police survey (102 officers, 37 states): 91% reported no major issues at local
-skateparks; 85% reported fewer complaint calls from businesses after skatepark opening.
-
-North Lanarkshire Council (Scotland). Wishaw Pump Track post-construction assessment.
-Reported 55% reduction in local anti-social behavior and crime rates following facility opening.
-(Circulates in advocacy literature; primary council report not independently verified at time of writing.)
-
----
-
-## Disclaimer
-
-All estimates are planning-level projections intended to support evidence-based municipal investment cases.
-Results should be presented alongside original source studies. This tool does not constitute a certified
-economic analysis, engineering assessment, or legal or financial recommendation.
-
-The calculator and this methodology document were produced for public advocacy purposes.
-The underlying Kemp (2025) study is the only peer-reviewed economic analysis specific to skateparks;
-all other estimates involve extrapolation, proxy data, or analogy by facility type.
-Confidence levels are indicated within the calculator interface.
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wheel Park ROI Calculator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --surface2: #293548;
+      --border: #334155;
+      --border2: #475569;
+      --accent: #60a5fa;
+      --accent-bg: rgba(96,165,250,0.12);
+      --green: #4ade80;
+      --green-bg: rgba(74,222,128,0.10);
+      --amber: #fbbf24;
+      --amber-bg: rgba(251,191,36,0.10);
+      --t1: #f8fafc;
+      --t2: #94a3b8;
+      --t3: #64748b;
+      --display: 'Epilogue', sans-serif;
+      --mono: 'JetBrains Mono', monospace;
+      --body: 'Outfit', sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--t1); font-family: var(--body); font-size: 15px; line-height: 1.6; min-height: 100vh; }
+    .wrap { max-width: 960px; margin: 0 auto; padding: 40px 20px 80px; }
+
+    /* Header */
+    .eyebrow { font-family: var(--mono); font-size: 11px; font-weight: 500; letter-spacing: 0.14em; color: var(--accent); text-transform: uppercase; margin-bottom: 10px; }
+    h1 { font-family: var(--display); font-weight: 800; font-size: clamp(26px,5vw,40px); line-height: 1.1; margin-bottom: 12px; }
+    h1 span { color: var(--accent); }
+    .intro { font-size: 14px; color: var(--t2); max-width: 560px; line-height: 1.7; margin-bottom: 36px; }
+
+    /* Layout */
+    .grid { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1.25fr); gap: 18px; align-items: start; }
+    .results-col { display: flex; flex-direction: column; gap: 12px; }
+    @media (max-width: 640px) { .grid { grid-template-columns: 1fr; } .meth-grid { grid-template-columns: 1fr !important; } }
+
+    /* Config card */
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; }
+    .clabel { font-family: var(--mono); font-size: 10px; font-weight: 600; letter-spacing: 0.12em; color: var(--t3); text-transform: uppercase; margin-bottom: 10px; }
+    .csec { margin-bottom: 22px; }
+    .bgrp { display: flex; gap: 6px; }
+    .bgrp button { flex: 1; padding: 9px 4px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; color: var(--t2); font-family: var(--body); font-size: 12px; font-weight: 500; cursor: pointer; transition: all 0.15s; }
+    .bgrp button:hover { border-color: var(--accent); color: var(--t1); }
+    .bgrp button.sel { background: var(--accent-bg); border-color: var(--accent); color: var(--accent); }
+    .hint { margin-top: 7px; font-size: 11px; color: var(--t3); line-height: 1.5; }
+    .hint.it { font-style: italic; margin-top: 3px; }
+
+    /* Number inputs */
+    .iwrap { position: relative; }
+    .ipfx { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--t3); font-family: var(--mono); font-size: 14px; pointer-events: none; }
+    input[type="number"] { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; color: var(--t1); font-family: var(--mono); font-size: 14px; padding: 10px 12px; outline: none; transition: border-color 0.15s; -moz-appearance: textfield; }
+    input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+    input[type="number"]:focus { border-color: var(--accent); }
+    .iwrap input { padding-left: 24px; }
+
+    /* Range slider */
+    input[type="range"] { width: 100%; height: 4px; border-radius: 2px; outline: none; cursor: pointer; -webkit-appearance: none; margin: 8px 0 2px; }
+    input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: var(--accent); cursor: pointer; border: 2px solid var(--surface); transition: transform 0.15s; }
+    input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.18); }
+    input[type="range"]::-moz-range-thumb { width: 18px; height: 18px; border-radius: 50%; background: var(--accent); border: 2px solid var(--surface); cursor: pointer; }
+    .slider-row { display: flex; justify-content: space-between; align-items: baseline; margin-top: 4px; }
+    .slider-val { font-family: var(--mono); font-size: 12px; color: var(--t1); }
+    .slider-climate { font-size: 11px; color: var(--accent); font-style: italic; }
+
+    /* Action buttons */
+    .arow { display: flex; gap: 8px; margin-top: 22px; }
+    .abtn { flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 9px 8px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; color: var(--t2); font-family: var(--body); font-size: 12px; font-weight: 500; cursor: pointer; transition: all 0.15s; }
+    .abtn:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* Pillar cards */
+    .pcard { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; transition: opacity 0.22s; }
+    .pcard.off { opacity: 0.35; }
+    .pcard.off .pbody { pointer-events: none; }
+    .phdr { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; border-bottom: 1px solid var(--border); gap: 10px; }
+    .ptitle { font-family: var(--display); font-weight: 700; font-size: 14px; margin-bottom: 2px; }
+    .psub { font-size: 11px; color: var(--t3); }
+    .pbody { padding: 18px; }
+    .pval { font-family: var(--mono); font-size: 30px; font-weight: 600; margin-bottom: 5px; }
+    /* FIX: formula and source notes bumped to --t2 for readability */
+    .pform { font-family: var(--mono); font-size: 11px; color: var(--t2); margin-bottom: 14px; line-height: 1.7; word-break: break-word; overflow-wrap: anywhere; }
+    .psrc { font-size: 12px; color: var(--t2); padding-top: 12px; border-top: 1px solid var(--border); line-height: 1.65; }
+    .psrc strong { color: var(--t1); }
+    .psrc .warn { color: var(--amber); }
+
+    /* Confidence badges */
+    .badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 8px; border-radius: 20px; font-family: var(--mono); font-size: 10px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; white-space: nowrap; }
+    .badge.g { background: var(--green-bg); color: var(--green); border: 1px solid rgba(74,222,128,0.2); }
+    .badge.a { background: var(--amber-bg); color: var(--amber); border: 1px solid rgba(251,191,36,0.2); }
+    .bdot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+
+    /* Toggle — white thumb in both states */
+    .trow { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .tog { width: 34px; height: 18px; border-radius: 9px; background: var(--border2); position: relative; cursor: pointer; transition: background 0.2s; flex-shrink: 0; }
+    .tog::after { content: ''; position: absolute; width: 12px; height: 12px; border-radius: 50%; background: white; top: 3px; left: 3px; transition: all 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.35); }
+    .tog.on { background: var(--green); }
+    .tog.on::after { left: 19px; }
+
+    /* Summary card — accent top border to stand out as key result */
+    .scard { background: var(--surface); border: 1px solid var(--border); border-top: 2px solid var(--accent); border-radius: 12px; padding: 20px; }
+    .slabel { font-family: var(--mono); font-size: 10px; font-weight: 600; letter-spacing: 0.12em; color: var(--t3); text-transform: uppercase; margin-bottom: 6px; }
+    .stotal { font-family: var(--mono); font-size: 38px; font-weight: 600; color: var(--accent); margin-bottom: 4px; line-height: 1; }
+    .ssub { font-size: 11px; color: var(--t3); margin-bottom: 18px; }
+    .metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+    .metric { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 12px; }
+    .mlabel { font-size: 11px; color: var(--t3); margin-bottom: 4px; }
+    .mval { font-family: var(--mono); font-size: 20px; font-weight: 600; }
+    .barrow { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 10px; color: var(--t3); margin-bottom: 6px; }
+    .barbg { height: 5px; background: var(--border); border-radius: 3px; overflow: hidden; }
+    /* FIX: bar fill now uses --accent (blue) instead of --green */
+    .barfill { height: 100%; background: var(--accent); border-radius: 3px; transition: width 0.45s ease; width: 0%; }
+
+    /* Methodology */
+    .meth { margin-top: 18px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; }
+    .mtitle { font-family: var(--mono); font-size: 10px; font-weight: 600; letter-spacing: 0.12em; color: var(--t3); text-transform: uppercase; margin-bottom: 18px; }
+    .meth-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+    .mitem { display: flex; gap: 12px; }
+    .mbadge { flex-shrink: 0; width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 11px; font-weight: 600; }
+    .mbadge.g { background: var(--green-bg); color: var(--green); }
+    .mbadge.a { background: var(--amber-bg); color: var(--amber); }
+    .mname { font-size: 13px; font-weight: 500; margin-bottom: 5px; }
+    .mtext { font-size: 12px; color: var(--t2); line-height: 1.65; }
+
+    /* Print */
+    @media print {
+      body { background: #fff !important; color: #111; }
+      .arow { display: none !important; }
+      .card, .pcard, .scard, .meth { background: #fff !important; border: 1px solid #ddd !important; }
+      .scard { border-top: 2px solid #1d4ed8 !important; }
+      .metric { background: #f7f7f7 !important; border: 1px solid #ddd !important; }
+      .barbg { background: #e5e5e5 !important; }
+      .pval, .mval { color: #111 !important; }
+      .stotal { color: #1d4ed8 !important; }
+      .barfill { background: #1d4ed8 !important; }
+      h1 { color: #111 !important; }
+      h1 span { color: #1d4ed8 !important; }
+      .pform, .psrc { color: #444 !important; }
+      .badge.g { background: #dcfce7 !important; color: #166534 !important; }
+      .badge.a { background: #fef3c7 !important; color: #92400e !important; }
+      .tog, input[type="range"] { display: none !important; }
+      .slider-climate { color: #1d4ed8 !important; }
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <div style="margin-bottom:36px;">
+    <p class="eyebrow">Municipal investment tool</p>
+    <h1>Wheel Park <span>ROI</span> Calculator</h1>
+    <p class="intro">Estimate the economic return of a public skatepark, pump track, or combined wheel park. Built for advocates presenting to city councils, parks departments, and planning committees. Toggle pillars on or off to match the case you're making.</p>
+  </div>
+
+  <div class="grid">
+
+    <div class="card">
+
+      <div class="csec">
+        <p class="clabel">Facility type</p>
+        <div class="bgrp">
+          <button data-t="pump_track" onclick="setType('pump_track')" class="sel">Pump track</button>
+          <button data-t="skatepark"  onclick="setType('skatepark')">Skatepark</button>
+          <button data-t="wheel_park" onclick="setType('wheel_park')">Combined</button>
+        </div>
+      </div>
+
+      <div class="csec">
+        <p class="clabel">Facility scale</p>
+        <div class="bgrp">
+          <button data-s="neighborhood" onclick="setScale('neighborhood')" class="sel">Neighborhood</button>
+          <button data-s="regional"     onclick="setScale('regional')">Regional</button>
+          <button data-s="destination"  onclick="setScale('destination')">Destination</button>
+        </div>
+        <p class="hint" id="shint"></p>
+      </div>
+
+      <div class="csec">
+        <p class="clabel">Construction cost</p>
+        <div class="iwrap">
+          <span class="ipfx">$</span>
+          <input type="number" id="cost" oninput="recalc()" placeholder="0">
+        </div>
+        <p class="hint" id="chint"></p>
+      </div>
+
+      <div class="csec">
+        <p class="clabel">Daily users <span style="font-family:var(--mono);font-size:9px;color:var(--amber);background:var(--amber-bg);padding:1px 5px;border-radius:3px;vertical-align:1px;">P2 input</span></p>
+        <input type="number" id="users" oninput="recalc()" placeholder="0">
+        <p class="hint" id="uhint"></p>
+        <p class="hint it">Drives visitor spending (P2) only — not used in P1</p>
+      </div>
+
+      <div class="csec">
+        <p class="clabel">Operating days / year</p>
+        <input type="range" id="opdays" min="180" max="365" step="5" value="300" oninput="updateSlider()">
+        <div class="slider-row">
+          <span class="slider-val" id="opdays-val">300 days/yr</span>
+          <span class="slider-climate" id="opdays-climate"></span>
+        </div>
+      </div>
+
+      <div class="arow">
+        <button class="abtn" onclick="doPrint()">&#8659;&nbsp;Download PDF</button>
+        <button class="abtn" id="lbtn" onclick="doLink()">&#128279;&nbsp;Copy link</button>
+      </div>
+
+    </div>
+
+    <div class="results-col">
+
+      <div class="pcard" id="p1c">
+        <div class="phdr">
+          <div style="min-width:0;">
+            <p class="ptitle">Direct user economic surplus</p>
+            <p class="psub">Consumer willingness-to-pay value</p>
+          </div>
+          <div class="trow">
+            <span class="badge g"><span class="bdot"></span>High confidence</span>
+            <span class="tog on" id="p1t" role="switch" aria-checked="true" aria-label="Toggle pillar 1" tabindex="0"
+              onclick="togP('p1')" onkeydown="if(event.key==='Enter'||event.key===' ')togP('p1')"></span>
+          </div>
+        </div>
+        <div class="pbody">
+          <div class="pval" id="p1v">—</div>
+          <div class="pform" id="p1f"></div>
+          <div class="psrc">
+            <strong>Source:</strong> Kemp (2025), <em>Journal of Economic Analysis</em> — Travel Cost Model,
+            Lauridsen Skatepark, Des Moines IA. Baseline: $488K/yr from a $6.2M facility (7.9%/yr). Rates
+            here (3–7.2%) are scaled down for smaller or less destination-oriented facilities, reflecting lower
+            travel-cost surplus per user. P1 is driven by construction cost, not user count.
+          </div>
+        </div>
+      </div>
+
+      <div class="pcard" id="p2c">
+        <div class="phdr">
+          <div style="min-width:0;">
+            <p class="ptitle">Visitor &amp; tourism spending</p>
+            <p class="psub">Out-of-town visitor economic impact</p>
+          </div>
+          <div class="trow">
+            <span class="badge a"><span class="bdot"></span>MTB proxy</span>
+            <span class="tog on" id="p2t" role="switch" aria-checked="true" aria-label="Toggle pillar 2" tabindex="0"
+              onclick="togP('p2')" onkeydown="if(event.key==='Enter'||event.key===' ')togP('p2')"></span>
+          </div>
+        </div>
+        <div class="pbody">
+          <div class="pval" id="p2v">—</div>
+          <div class="pform" id="p2f"></div>
+          <div class="psrc">
+            <strong class="warn">Mountain bike tourism proxy data.</strong> Visitor spending benchmarks from
+            Whistler Bikepark and NW Arkansas studies ($94–$133/day range). No equivalent peer-reviewed dataset
+            exists for pump tracks or skateparks. Visitor fractions (1.5–4%) are intentionally conservative.
+            Multiplier: 1.72&times; (OIA, 2022).
+          </div>
+        </div>
+      </div>
+
+      <div class="scard">
+        <p class="slabel">Combined annual value</p>
+        <div class="stotal" id="stot">—</div>
+        <p class="ssub">per year &middot; community economic value, not municipal revenue</p>
+        <div class="metrics">
+          <div class="metric">
+            <p class="mlabel">Value recovery</p>
+            <p class="mval" id="spb">—</p>
+          </div>
+          <div class="metric">
+            <p class="mlabel">Annual return</p>
+            <p class="mval" id="sret">—</p>
+          </div>
+        </div>
+        <div class="barrow">
+          <span>Value recovery progress (20-yr horizon)</span>
+          <span id="bpct">—</span>
+        </div>
+        <div class="barbg"><div class="barfill" id="bfill"></div></div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="meth">
+    <p class="mtitle">Methodology notes</p>
+    <div class="meth-grid">
+      <div class="mitem">
+        <div class="mbadge g">P1</div>
+        <div>
+          <p class="mname">High confidence — peer-reviewed</p>
+          <p class="mtext">P1 = construction cost &times; annual surplus rate. Kemp (2025) Lauridsen
+          baseline: $488K/yr from $6.2M = 7.9%/yr. Rates here (3–7.2%) are scaled down for smaller
+          facilities: neighborhood parks serve mostly local users whose near-zero travel costs generate
+          minimal TCM-measured surplus. Destination facilities approach the Lauridsen ratio. P1 is
+          independent of daily user count.</p>
+        </div>
+      </div>
+      <div class="mitem">
+        <div class="mbadge a">P2</div>
+        <div>
+          <p class="mname">Medium confidence — proxy data</p>
+          <p class="mtext">P2 = daily users &times; visitor fraction (1.5–4%, ascending by scale) &times;
+          operating days &times; proxy daily spend &times; 1.72&times; multiplier (OIA, 2022). Operating
+          days are adjustable to reflect local climate: 340+ days for mild climates (GA, TX, FL),
+          ~300 for temperate (CO, PA, NC), ~265 for northern (MN, WI, NY), ~220 for harsh winters
+          (ND, MT, AK). Spending benchmarks from mountain bike tourism research — no equivalent dataset
+          exists for wheeled sport parks. <strong style="color:var(--t1);">Income adjustment:</strong> MTB
+          participant households skew above $75K median income vs. ~$54K for skateboarding (NSGA survey
+          data); pump track visitor spend estimates are set higher to reflect the MTB-family demographic,
+          while skatepark estimates are reduced accordingly. Wheel park figures split the difference.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+<script>
+const OIA = 1.72;
+const D = {
+  pump_track: {
+    neighborhood:{cost:75000,   users:25,  vP:.015, vS:22, sR:.030,
+      cH:'Benchmark: $50K–$120K',   uH:'Typical range: 15–50 users/day',   sH:'Small asphalt or modular pump track · Neighborhood community use'},
+    regional:    {cost:200000,  users:60,  vP:.025, vS:58, sR:.048,
+      cH:'Benchmark: $150K–$300K',  uH:'Typical range: 40–100 users/day',  sH:'Mid-size asphalt pump track · Regional draw from surrounding area'},
+    destination: {cost:450000,  users:120, vP:.032, vS:85, sR:.060,
+      cH:'Benchmark: $350K–$600K',  uH:'Typical range: 80–200 users/day',  sH:'Competition-grade pump track · Regional or national draw'}
+  },
+  skatepark: {
+    neighborhood:{cost:275000,  users:40,  vP:.018, vS:20, sR:.035,
+      cH:'Benchmark: $150K–$400K',  uH:'Typical range: 25–70 users/day',   sH:'5,000–8,000 sq ft · Neighborhood concrete park'},
+    regional:    {cost:550000,  users:80,  vP:.030, vS:48, sR:.055,
+      cH:'Benchmark: $450K–$750K',  uH:'Typical range: 60–120 users/day',  sH:'10,000–15,000 sq ft · Regional facility with destination draw'},
+    destination: {cost:1200000, users:150, vP:.040, vS:72, sR:.072,
+      cH:'Benchmark: $900K–$1.5M',  uH:'Typical range: 100–300 users/day', sH:'20,000+ sq ft · Destination-grade (Lauridsen scale comparison)'}
+  },
+  wheel_park: {
+    neighborhood:{cost:350000,  users:55,  vP:.018, vS:22, sR:.032,
+      cH:'Benchmark: $250K–$450K',  uH:'Typical range: 35–85 users/day',   sH:'Combined skatepark + pump track · Multi-discipline neighborhood hub'},
+    regional:    {cost:750000,  users:105, vP:.030, vS:52, sR:.052,
+      cH:'Benchmark: $600K–$950K',  uH:'Typical range: 75–160 users/day',  sH:'Mid-size combined facility · Regional multi-discipline draw'},
+    destination: {cost:1800000, users:250, vP:.038, vS:82, sR:.068,
+      cH:'Benchmark: $1.4M–$2.5M',  uH:'Typical range: 180–400 users/day', sH:'Full wheel park complex · Major regional destination'}
+  }
+};
+
+let cT='pump_track', cS='neighborhood', p1on=true, p2on=true;
+
+function fs(n){ if(!n||n<=0)return '—'; if(n>=1e6)return '$'+(n/1e6).toFixed(2)+'M'; if(n>=1000)return '$'+Math.round(n/1000)+'K'; return '$'+Math.round(n); }
+function ff(n){ return '$'+Math.round(n).toLocaleString(); }
+function fc(n){ if(n>=1e6)return '$'+(n/1e6).toFixed(n%1e6===0?0:2)+'M'; return '$'+Math.round(n/1000)+'K'; }
+function getOD(){ return parseInt(document.getElementById('opdays').value)||300; }
+
+function climateLabel(d){
+  if(d>=340)return 'Mild climate (e.g., GA, TX, CA, FL)';
+  if(d>=300)return 'Temperate (e.g., CO, PA, OR, NC)';
+  if(d>=260)return 'Northern (e.g., MN, WI, NY, WA)';
+  return 'Cold / harsh winters (e.g., ND, MT, AK)';
+}
+
+function syncSlider(){
+  const sl=document.getElementById('opdays');
+  const val=parseInt(sl.value), mn=parseInt(sl.min), mx=parseInt(sl.max);
+  const pct=((val-mn)/(mx-mn))*100;
+  sl.style.background=`linear-gradient(to right,var(--accent) ${pct}%,var(--border) ${pct}%)`;
+  document.getElementById('opdays-val').textContent=val+' days/yr';
+  document.getElementById('opdays-climate').textContent=climateLabel(val);
+}
+
+function updateSlider(){ syncSlider(); recalc(); }
+
+function setType(t){
+  cT=t;
+  document.querySelectorAll('[data-t]').forEach(b=>b.classList.remove('sel'));
+  document.querySelector('[data-t="'+t+'"]').classList.add('sel');
+  load();
+}
+function setScale(s){
+  cS=s;
+  document.querySelectorAll('[data-s]').forEach(b=>b.classList.remove('sel'));
+  document.querySelector('[data-s="'+s+'"]').classList.add('sel');
+  load();
+}
+function load(){
+  const d=D[cT][cS];
+  document.getElementById('cost').value =d.cost;
+  document.getElementById('users').value=d.users;
+  document.getElementById('chint').textContent=d.cH;
+  document.getElementById('uhint').textContent=d.uH;
+  document.getElementById('shint').textContent=d.sH;
+  recalc();
+}
+function togP(id){
+  const tog=document.getElementById(id+'t'), card=document.getElementById(id+'c');
+  const on=tog.classList.toggle('on');
+  tog.setAttribute('aria-checked',on);
+  card.classList.toggle('off',!on);
+  if(id==='p1')p1on=on; else p2on=on;
+  recalc();
+}
+function recalc(){
+  const d=D[cT][cS];
+  const cost=parseFloat(document.getElementById('cost').value)||0;
+  const usr =parseFloat(document.getElementById('users').value)||0;
+  const od  =getOD();
+
+  const p1=cost*d.sR;
+  document.getElementById('p1v').textContent=fs(p1);
+  document.getElementById('p1f').textContent=
+    fc(cost)+' \u00d7 '+(d.sR*100).toFixed(1)+'% surplus rate = '+ff(p1)+'/yr  \u00b7  scaled from Kemp $488K / $6.2M baseline';
+
+  const vdays=Math.round(usr*d.vP*od);
+  const p2=vdays*d.vS*OIA;
+  document.getElementById('p2v').textContent=fs(p2);
+  document.getElementById('p2f').textContent=
+    (d.vP*100).toFixed(1)+'% of '+usr+' users \u00d7 '+od+' days = '+
+    vdays.toLocaleString()+' visitor-days/yr  \u00d7  $'+d.vS+'/day  \u00d7  1.72\u00d7  =  '+ff(p2)+'/yr';
+
+  const total=(p1on?p1:0)+(p2on?p2:0);
+  document.getElementById('stot').textContent=total>0?ff(total):'—';
+
+  if(total>0&&cost>0){
+    const pb=cost/total, ret=Math.round((total/cost)*100);
+    document.getElementById('spb').textContent =pb<1?'< 1 yr':pb.toFixed(1)+' yrs';
+    document.getElementById('sret').textContent=ret+'%/yr';
+    const pct=Math.min(100,Math.max(0,Math.round(((20-pb)/20)*100)));
+    document.getElementById('bfill').style.width=pct+'%';
+    document.getElementById('bpct').textContent=pct+'% within 20 yrs';
+  } else {
+    ['spb','sret'].forEach(i=>document.getElementById(i).textContent='—');
+    document.getElementById('bfill').style.width='0%';
+    document.getElementById('bpct').textContent='—';
+  }
+
+  try{
+    history.replaceState(null,'','#'+[cT,cS,
+      document.getElementById('cost').value,
+      document.getElementById('users').value,
+      od].join('-'));
+  }catch(e){}
+}
+
+function parseHash(){
+  try{
+    const h=window.location.hash.slice(1); if(!h)return false;
+    const[t,s,c,u,od]=h.split('-');
+    if(!D[t]||!D[t][s])return false;
+    cT=t; cS=s;
+    document.querySelectorAll('[data-t]').forEach(b=>b.classList.remove('sel'));
+    document.querySelector('[data-t="'+t+'"]').classList.add('sel');
+    document.querySelectorAll('[data-s]').forEach(b=>b.classList.remove('sel'));
+    document.querySelector('[data-s="'+s+'"]').classList.add('sel');
+    const d=D[t][s];
+    document.getElementById('cost').value =c||d.cost;
+    document.getElementById('users').value=u||d.users;
+    if(od){const v=Math.round(parseInt(od)/5)*5; document.getElementById('opdays').value=Math.min(365,Math.max(180,v));}
+    document.getElementById('chint').textContent=d.cH;
+    document.getElementById('uhint').textContent=d.uH;
+    document.getElementById('shint').textContent=d.sH;
+    return true;
+  }catch(e){return false;}
+}
+
+function doLink(){
+  const c=document.getElementById('cost').value, u=document.getElementById('users').value;
+  const url=window.location.href.split('#')[0]+'#'+[cT,cS,c,u,getOD()].join('-');
+  const btn=document.getElementById('lbtn'), orig=btn.innerHTML;
+  const done=()=>{btn.textContent='✓ Copied!'; setTimeout(()=>btn.innerHTML=orig,2200);};
+  if(navigator.clipboard){navigator.clipboard.writeText(url).then(done).catch(()=>prompt('Copy this link:',url));}
+  else prompt('Copy this link:',url);
+}
+
+function doPrint(){ window.print(); }
+
+if(!parseHash())load(); else recalc();
+syncSlider();
+</script>
+</body>
+</html>
