@@ -6,7 +6,7 @@
   <link rel="icon" href="favicon.ico">
   <link rel="icon" type="image/png" href="favicon-32x32.png">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
-  <title>Wheel Park ROI Calculator</title>
+  <title>Skatepark and Pump Track ROI Calculator</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
@@ -32,6 +32,11 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { background: var(--bg); color: var(--t1); font-family: var(--body); font-size: 15px; line-height: 1.6; min-height: 100vh; }
     .wrap { max-width: 960px; margin: 0 auto; padding: 40px 20px 80px; }
+
+    /* Top nav — back to main site */
+    .topnav { margin-bottom: 24px; }
+    .homebtn { display: inline-flex; align-items: center; padding: 8px 14px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; color: var(--t2); font-family: var(--mono); font-size: 11px; font-weight: 500; letter-spacing: 0.07em; text-transform: uppercase; text-decoration: none; transition: all 0.15s; }
+    .homebtn:hover { border-color: var(--accent); color: var(--accent); }
 
     /* Header */
     .eyebrow { font-family: var(--mono); font-size: 11px; font-weight: 500; letter-spacing: 0.14em; color: var(--accent); text-transform: uppercase; margin-bottom: 10px; }
@@ -130,6 +135,13 @@
     .mname { font-size: 13px; font-weight: 500; margin-bottom: 5px; }
     .mtext { font-size: 12px; color: var(--t2); line-height: 1.65; }
 
+    /* Related-tool cross-link */
+    .xlink { margin-top: 26px; padding-top: 22px; border-top: 1px solid var(--border); }
+    .xlabel { font-family: var(--mono); font-size: 10px; font-weight: 600; letter-spacing: 0.12em; color: var(--t3); text-transform: uppercase; margin-bottom: 12px; }
+    .xbtn { display: inline-flex; align-items: center; padding: 10px 16px; background: var(--accent-bg); border: 1px solid var(--accent); border-radius: 8px; color: var(--accent); font-family: var(--body); font-size: 13px; font-weight: 600; text-decoration: none; transition: all 0.15s; }
+    .xbtn:hover { background: var(--accent); color: var(--bg); }
+    .xtext { font-size: 12px; color: var(--t2); line-height: 1.65; margin-top: 12px; max-width: 640px; }
+
     /* Print */
     @media print {
       body { background: #fff !important; color: #111; }
@@ -148,15 +160,25 @@
       .badge.a { background: #fef3c7 !important; color: #92400e !important; }
       .tog, input[type="range"] { display: none !important; }
       .slider-climate { color: #1d4ed8 !important; }
+      .topnav { display: none !important; }
+      .xbtn { background: #fff !important; color: #1d4ed8 !important; border-color: #1d4ed8 !important; }
+      .xtext { color: #444 !important; }
+      .xlink { border-top: 1px solid #ddd !important; }
     }
   </style>
 </head>
 <body>
 <div class="wrap">
 
+  <div class="topnav">
+    <a class="homebtn" href="https://www.postmillenniumrenaissance.com" target="_top">
+      &#8592;&nbsp;Post Millennium Renaissance
+    </a>
+  </div>
+
   <div style="margin-bottom:36px;">
     <p class="eyebrow">Municipal investment tool</p>
-    <h1>Wheel Park <span>ROI</span> Calculator</h1>
+    <h1>Skatepark and Pump Track <span>ROI</span> Calculator</h1>
     <p class="intro">Estimate the economic return of a public skatepark, pump track, or combined wheel park. Built for advocates presenting to city councils, parks departments, and planning committees. Toggle pillars on or off to match the case you're making.</p>
   </div>
 
@@ -318,6 +340,17 @@
           while skatepark estimates are reduced accordingly. Wheel park figures split the difference.</p>
         </div>
       </div>
+    </div>
+
+    <div class="xlink">
+      <p class="xlabel">Related tool</p>
+      <a class="xbtn" href="https://www.postmillenniumrenaissance.com/roi/" target="_top">
+        Trail Investment ROI Calculator&nbsp;&#8594;
+      </a>
+      <p class="xtext">Building the case for singletrack rather than a wheeled-sport facility? The Trail
+      Investment ROI Calculator runs the same style of economic model against trail projects,
+      synthesized from 13 U.S. trail investment studies, with metric/imperial and international
+      currency toggles.</p>
     </div>
   </div>
 
