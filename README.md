@@ -13,9 +13,9 @@ The Skatepark and Pump Track ROI Calculator estimates the annual economic value 
 
 **What the output represents:** Both pillars estimate *community economic value*, not municipal tax receipts, not direct facility revenue, and not return on investment in a commercial sense. The "value recovery" metric shows how long it takes for cumulative community economic benefit to equal the facility's construction cost. These figures are appropriate for public-good infrastructure framing before a council — they are not cash flow projections.
 
-**Positioning:** Inputs were set below the published anchors, but the scaling and visitor inputs are judgment, so the tool does not claim a floor. The on-page checks flag any assumption set above its anchor, and note when direct spend is a large share of the lowest MTB benchmark. Present results with the assumptions shown, and say which were edited.
+**Positioning:** Inputs were set below the published anchors, but the scaling and visitor inputs are judgment, so the tool does not claim a floor. The on-page checks flag any assumption set above its anchor, and note when direct spend is a large share of the lowest per-day MTB figure in the Ledger. Present results with the assumptions shown, and say which were edited.
 
-**P1 and P2 are different kinds of value.** P1 is consumer surplus (welfare). P2 is visitor spending (transactions). The combined figure is shown for scale, not as a financial return, and the tool shows each pillar's payback alone and its share of the total. Value is gross, undiscounted and before maintenance and operating cost.
+**P1 and P2 are different kinds of value, so they are shown as two separate results.** P1 is consumer surplus (welfare: what users gain). P2 is visitor spending (economic impact: what visitors spend locally). Each has its own value and its own payback. A combined total is available behind a checkbox that is off by default, because adding a welfare measure to a spending measure mixes two accounting frames. In a benefit-cost analysis spending is a transfer, and a visitor's trip cost is already deducted inside the travel-cost surplus, so the dollars are not literally counted twice, but the sum answers no single question. The multiplier is a further problem: an output multiplier counts suppliers' sales too, which inflates P2 against any welfare figure. Values are gross, undiscounted and before maintenance and operating cost.
 
 ---
 
@@ -35,9 +35,11 @@ P1 = Construction Cost × Annual Surplus Rate
 
 P1 is anchored to the only peer-reviewed Travel Cost Model (TCM) study of a public skatepark facility:
 
-> Kemp, J. (2025). Estimating the user benefits associated with large public skateparks.
-> *Journal of Economic Analysis*, 4(1), 66–82.
+> Kemp, T. (2025). Shred Central: Estimating the user benefits associated with large public skateparks.
+> *Journal of Economic Analysis*, 4(1):90. doi:10.58567/jea04010004
 > https://www.anserpress.org/journal/jea/4/1/90
+>
+> (AMA-style citation: 90 is the publisher's article number; the page gives no page range. An earlier version of this README printed "66–82" and "Kemp, J." and the title without "Shred Central:"; all three were wrong. Checked against the publisher's page 2026-10-21.)
 
 **Kemp (2025) baseline — Lauridsen Skatepark, Des Moines, Iowa:**
 - Facility size: 88,000 sq ft (largest public skatepark in the United States at time of study)
@@ -81,11 +83,15 @@ P2 = Average Daily Users × Visitor Fraction × Operating Days × Direct Spend p
 
 ### Source data
 
-No peer-reviewed visitor spending study exists for public skateparks or pump tracks. P2 uses mountain bike tourism proxy data as the nearest available benchmark:
+No peer-reviewed visitor spending study exists for public skateparks or pump tracks. P2 uses mountain bike trail visitor spending as the nearest available benchmark. **The linkable source is PMR's own [Trail Visitor Spending Ledger](https://www.postmillenniumrenaissance.com/studies/)**, which lists each study with its source page, a unit (day, trip, night, visit) and a confidence tier. Its out-of-town figures expressed *per day* run from $90 (Helena, via the TPL Green Paper, tier M) to $200 (CAMBA, Hadley & Trechter 2020, tier V). Those two numbers are `PROXY_LOW` and `PROXY_HIGH` in the tool.
 
-- Whistler Bikepark visitor studies: $94–$133 per visitor per day
-- Northwest Arkansas cycling tourism study: $159.4 million annual economic impact from bicycle tourism; $416 average spending per destination trip (Trust for Public Land, 2025)
-- Economic multiplier: $1.72 per $1 of direct outdoor recreation visitor spending (Outdoor Industry Association, 2022)
+Three figures that earlier versions of this README (and the page) cited could **not** be traced on 2026-10-21 and are no longer used as benchmarks:
+
+- "Whistler Bikepark visitor studies: $94–$133 per visitor per day." No such figure was found. The nearest traceable Whistler numbers are a 2015 Resort Municipality of Whistler summer-visitor figure of $148/day (all summer visitors, not bike park users; as quoted by REI) and a 2006 pilot study of the Bike Park (non-resident spending of $16.2M for June–September). Neither is a per-day bike park figure.
+- "$416 per destination trip (Trust for Public Land, 2025)." Not located.
+- "Economic multiplier $1.72 per $1 (Outdoor Industry Association, 2022)." Not found in OIA's published reports. The tool still uses 1.72× as an editable default, tagged **C · Cited, unverified**, and shows direct spending before the multiplier next to the result. A regional example found while checking: a peer-reviewed Boundary Waters study reports a 1.59 output multiplier.
+
+The $159.4 million Northwest Arkansas figure is real (University of Arkansas / Walton Family Foundation, 2023, covering all bicycling in two counties) but is an all-cyclist total, not a per-visitor spend, and is not used in the calculation.
 
 These are a different kind of facility: lift-served bike parks and trail networks, with lodging, where a visit is a trip. A wheeled-sport facility is a different product. The tool scales spend down from the benchmark by judgment, as described below, and the page tags the result **P · Proxy, inputs assumed**.
 
@@ -121,7 +127,7 @@ Skateboarding participant household income is near or slightly below the nationa
 **Application in the calculator:**
 The income argument above is the reason for setting skatepark spend below pump-track spend. It is not a derivation, and it is weak for pump tracks, which serve many children and families, so adult MTB household income is a poor basis for their higher values. In the presets, **scale moves the spend value much more than type does** (neighborhood pump track $22 vs neighborhood skatepark $20). Combined wheel park figures sit between the two.
 
-The MTB proxy range from source studies is $94–$133 per visitor per day (direct spending, before any multiplier). Spend values in the calculator range from $20 (neighborhood skatepark) to $85 (destination pump track). **The earlier text called these "substantial discounts at all tiers". That does not hold at the top:** $85 is 90% of the lowest benchmark, and after the 1.72× multiplier a destination pump track is $146 per visitor-day. The page now shows direct spend as a share of the lowest benchmark and the after-multiplier figure, and the destination presets are open to revision.
+The MTB per-day range in the Ledger is $90–$200 per visitor per day (direct spending, before any multiplier). Spend values in the calculator range from $20 (neighborhood skatepark) to $85 (destination pump track). **The earlier text called these "substantial discounts at all tiers". That does not hold at the top:** $85 is 94% of the lowest per-day figure ($90), and after the 1.72× multiplier a destination pump track is $146 per visitor-day. The page now shows direct spend as a share of the lowest per-day Ledger figure and the after-multiplier figure, and the destination presets are open to revision.
 
 ### Operating days
 
@@ -132,7 +138,7 @@ Default is 300 days per year (applies to P2 only). The slider allows adjustment 
 | 340–365 | Mild (GA, TX, CA, FL) |
 | 300–339 | Temperate (CO, PA, OR, NC) |
 | 260–299 | Northern (MN, WI, NY, WA) |
-| 180–259 | Cold / harsh winters (ND, MT, AK) |
+| 180–259 | Cold / harsh winters (ND, MT, AK, Canada) |
 
 ---
 
@@ -157,7 +163,7 @@ The table below lists every parameter for each facility type and scale combinati
 - **sR (Surplus Rate)** [tag J · Judgment]: Annual surplus rate applied to construction cost for P1. Derived from Kemp (2025) Lauridsen baseline of 7.9%/yr, scaled down by facility size and destination-draw characteristics.
 - **vP (Visitor Fraction)** [tag J · Judgment]: Percentage of daily users estimated to be out-of-town visitors for P2 calculation. Conservative relative to MTB destination benchmarks.
 - **vS (Direct spend/visitor-day)** [tag P · Proxy]: Estimated average daily spending by an out-of-town visitor (gas, food, lodging, retail), before the multiplier. Scaled from MTB proxy data by judgment.
-- **Multiplier** [tag C · Cited]: 1.72×, OIA (2022), national outdoor recreation. May overstate a small local facility.
+- **Multiplier** [tag C · Cited, unverified]: 1.72×, attributed to OIA (2022); could not be located. Counts suppliers' sales too, so it may overstate a small local facility.
 
 ### Scale definitions
 
@@ -213,11 +219,13 @@ The faster payback for pump tracks vs. skateparks at equivalent scale comes from
 ## What the page shows
 
 - A per-field tag on every assumption (J · Judgment, P · Proxy, C · Cited), and a P1/P2 badge with a letter and a word (never color alone).
-- Checks under the assumptions: a rate above the Kemp-based 7.9%; direct spend at or above, or at half or more of, the lowest MTB benchmark ($94).
-- Each pillar's payback alone and its share of the combined value.
+- **Two separate results (P1 user value, P2 visitor spending)**, each with its own payback, annual value ÷ cost, 20-year multiple and timeline. P2 also shows direct spending before the multiplier.
+- An optional **combined total**, off by default (checkbox).
+- Assumptions panel collapsed by default; it opens for print.
+- Checks under the assumptions: a rate above the Kemp-based 7.9%; direct spend at or above, or at half or more of, the lowest per-day MTB figure in the Ledger ($90).
 - Payback on a 20-year timeline, replacing the earlier "value recovery progress" bar, which showed the *remaining* share of 20 years after payback and read as progress.
-- **Copy link** always writes the canonical `https://www.postmillenniumrenaissance.com/pump-track/#…` address and carries the pillar toggles and any edited assumptions. Format: `#type-scale-days-pillars-cost-users-sR-vP-vS-mult`, where `pillars` is `11`, `10`, `01` or `00` and `p` means "follow the preset". Links in the old format (`#type-scale-cost-users-days`) still open.
-- Print includes the assumptions, the pillars included, the date, and a planning-estimate notice.
+- **Copy link** always writes the canonical `https://www.postmillenniumrenaissance.com/pump-track/#…` address and carries the pillar toggles and any edited assumptions. Format: `#type-scale-days-pillars-cost-users-sR-vP-vS-mult-combined`, where `pillars` is `11`, `10`, `01` or `00` (which pillars are shown), `p` means "follow the preset", and `combined` is `1` when the combined total is shown (absent means off). Links in the earlier formats (`#type-scale-cost-users-days`, and the same without `combined`) still open.
+- Print includes the assumptions, the pillars shown, the date, and a planning-estimate notice.
 
 ## Verification status (2026-10-21)
 
@@ -227,9 +235,11 @@ The faster payback for pump tracks vs. skateparks at equivalent scale comes from
 | Kemp article link (anserpress.org), press link (spaskateparks.com), author profile (uwec.edu/profiles/kempta) | Confirmed working by Jon, 2026-10-21 |
 | Kemp: $6.2M cost | **Not in the abstract.** Press: $6.1M expected / $6.3M funding goal (2019); links from search results, not opened |
 | Kemp: size, sample, dollar year | Not stated in the abstract |
-| Whistler $94–$133 per visitor-day | Not verified; cited via NW Arkansas studies |
+| Whistler $94–$133 per visitor-day | **Could not be traced; removed as a benchmark.** Replaced by the Ledger's per-day range ($90–$200) |
+| Ledger per-day range ($90 Helena, $200 CAMBA) | Read from the Ledger's own data; the Ledger itself notes its figures were not all checked against source documents |
 | NW Arkansas, TPL 2025, $416 per trip | Not verified |
-| OIA (2022) 1.72× multiplier | Not verified |
+| OIA (2022) 1.72× multiplier | **Not found in OIA's published reports**; kept as an editable default, tagged unverified |
+| Kemp citation (title, author, 4(1):90, DOI) | Checked against the publisher's page; DOI resolves to the article |
 | NSGA and Tony Hawk Foundation income data | Not verified |
 | Wishaw pump track 55% crime reduction | Not used by the tool; primary report not verified |
 
@@ -253,8 +263,8 @@ https://www.crestonnews.com/2019/10/14/des-moines-skatepark-reaches-6-3m-funding
 
 **Primary study — P1 anchor:**
 
-Kemp, J. (2025). Estimating the user benefits associated with large public skateparks.
-*Journal of Economic Analysis*, 4(1), 66–82.
+Kemp, T. (2025). Shred Central: Estimating the user benefits associated with large public skateparks.
+*Journal of Economic Analysis*, 4(1):90. doi:10.58567/jea04010004
 https://www.anserpress.org/journal/jea/4/1/90
 
 **Supporting literature — wheeled sport economics:**
@@ -273,15 +283,14 @@ https://doi.org/10.3389/fspor.2024.1457427
 
 **Visitor spending & economic multiplier:**
 
-Outdoor Industry Association. (2022). *Outdoor Participation Trends Report.*
-Economic multiplier: $1.72 per $1 of direct visitor spending in local communities.
+Outdoor Industry Association. (2022). *Outdoor Participation Trends Report.* **Attribution of the 1.72× multiplier unverified; not found.**
 
-Trust for Public Land. (2025). Mountain bike trail economic impact data.
-Average visitor spending: $416 per destination trip. Trail networks supporting up to 1,626 jobs
+Trust for Public Land. (2025). Mountain bike trail economic impact data. **The $416 per-trip figure was not located.** Trail networks supporting up to 1,626 jobs
 and $54.1 million in annual labor income across 13 locations.
 
-Whistler Bikepark visitor studies. Cited range: $94–$133 per visitor per day.
-(Referenced via Northwest Arkansas cycling tourism economic studies.)
+Whistler Bikepark visitor studies. **The $94–$133 range could not be traced and is no longer used.** (See Source data.)
+
+**Linkable P2 source:** PMR Trail Visitor Spending Ledger, https://www.postmillenniumrenaissance.com/studies/
 
 **Cycling infrastructure health & social ROI** (background reading; not used by the calculator):
 
