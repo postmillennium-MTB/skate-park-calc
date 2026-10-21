@@ -89,9 +89,13 @@
     :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
     /* ===== COMPONENTS ===== */
-    .topnav { margin-bottom: 24px; }
+    .topnav { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
     .homebtn { display: inline-flex; align-items: center; min-height: 40px; padding: 8px 14px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; color: var(--t2); font-family: var(--mono); font-size: 11px; font-weight: 500; letter-spacing: 0.07em; text-transform: uppercase; text-decoration: none; transition: all 0.15s; }
     .homebtn:hover { border-color: var(--accent); color: var(--accent); }
+    /* Lucide square-chevron-left. Text may wrap: at 320px the long label would
+       otherwise push the page sideways. */
+    .homebtn { max-width: 100%; line-height: 1.3; }
+    .homebtn svg { width: 18px; height: 18px; flex-shrink: 0; margin-right: 8px; }
 
     .eyebrow { font-family: var(--mono); font-size: 11px; font-weight: 500; letter-spacing: 0.14em; color: var(--accent); text-transform: uppercase; margin-bottom: 10px; }
     h1 { font-family: var(--display); font-weight: 800; font-size: clamp(26px,5vw,40px); line-height: 1.1; margin-bottom: 12px; }
@@ -284,7 +288,10 @@
 
   <div class="topnav">
     <a class="homebtn" href="https://www.postmillenniumrenaissance.com" target="_top">
-      &#8592;&nbsp;Post Millennium Renaissance
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-square-chevron-left" aria-hidden="true" focusable="false"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="m14 16-4-4 4-4"/></svg>Post Millennium Renaissance
+    </a>
+    <a class="homebtn" href="https://www.postmillenniumrenaissance.com/roi/" target="_top">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-square-chevron-left" aria-hidden="true" focusable="false"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="m14 16-4-4 4-4"/></svg>Trail Investment ROI Calculator
     </a>
   </div>
 
