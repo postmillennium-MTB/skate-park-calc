@@ -99,7 +99,7 @@ The Ledger's other per-day rows, with their sources, are at https://www.postmill
 Three figures that earlier versions of this README (and the page) cited could **not** be traced on 2026-10-21 and are no longer used as benchmarks:
 
 - "Whistler Bikepark visitor studies: $94–$133 per visitor per day." No such figure was found. The nearest traceable Whistler numbers are a 2015 Resort Municipality of Whistler summer-visitor figure of $148/day (all summer visitors, not bike park users; as quoted by REI) and a 2006 pilot study of the Bike Park (non-resident spending of $16.2M for June–September). Neither is a per-day bike park figure.
-- "$416 per destination trip (Trust for Public Land, 2025)." Not located.
+- "$416 per destination trip (Trust for Public Land, 2025)." **Corrected 2026-10-21 (an earlier version of this note said "not located"):** the TPL Green Paper *Economic Benefits of Mountain Biking* (March 2025) does say that for the destinations in its appendix, average per-visit spending by non-local mountain bikers is $416. It is *per visit*, not per trip, it averages the appendix destinations, and it is not a per-day figure, so it is not one of the four benchmarks.
 - "Economic multiplier $1.72 per $1 (Outdoor Industry Association, 2022)." Not found in OIA's published reports. The tool still uses 1.72× as an editable default, tagged **C · Cited, unverified**, and shows direct spending before the multiplier next to the result. A regional example found while checking: a peer-reviewed Boundary Waters study reports a 1.59 output multiplier.
 
 The $159.4 million Northwest Arkansas figure is real (University of Arkansas / Walton Family Foundation, 2023, covering all bicycling in two counties) but is an all-cyclist total, not a per-visitor spend, and is not used in the calculation.
@@ -248,7 +248,7 @@ The faster payback for pump tracks vs. skateparks at equivalent scale comes from
 | Kemp: size, sample, dollar year | Not stated in the abstract |
 | Whistler $94–$133 per visitor-day | **Could not be traced; removed as a benchmark.** Replaced by the Ledger's per-day range ($90–$200) |
 | Four benchmark studies (Helena, Coldwater, West Virginia, CAMBA) | Titles, authors and figures confirmed in the documents for Coldwater ($138.49), Helena via the TPL Green Paper ($90.29–$110.59) and CAMBA ($200); West Virginia not opened (HTTP 403). The Ledger itself notes not every figure was checked against its source |
-| NW Arkansas, TPL 2025, $416 per trip | Not verified |
+| TPL 2025, $416 per non-local visit | Found in the Green Paper text (per visit, not per day). Not used as a benchmark. NW Arkansas $159.4M is a separate all-cyclist study |
 | OIA (2022) 1.72× multiplier | **Not found in OIA's published reports**; kept as an editable default, tagged unverified |
 | Kemp citation (title, author, 4(1):90, DOI) | Checked against the publisher's page; DOI resolves to the article |
 | NSGA and Tony Hawk Foundation income data | Not verified |
@@ -296,7 +296,7 @@ https://doi.org/10.3389/fspor.2024.1457427
 
 Outdoor Industry Association. (2022). *Outdoor Participation Trends Report.* **Attribution of the 1.72× multiplier unverified; not found.**
 
-Trust for Public Land. (2025). Mountain bike trail economic impact data. **The $416 per-trip figure was not located.** Trail networks supporting up to 1,626 jobs
+Trust for Public Land. (2025). Mountain bike trail economic impact data. The $416 figure is real (per non-local visit, averaged over its appendix destinations) but is not per-day and is not used. Trail networks supporting up to 1,626 jobs
 and $54.1 million in annual labor income across 13 locations.
 
 Whistler Bikepark visitor studies. **The $94–$133 range could not be traced and is no longer used.** (See Source data.)
