@@ -83,7 +83,18 @@ P2 = Average Daily Users × Visitor Fraction × Operating Days × Direct Spend p
 
 ### Source data
 
-No peer-reviewed visitor spending study exists for public skateparks or pump tracks. P2 uses mountain bike trail visitor spending as the nearest available benchmark. **The linkable source is PMR's own [Trail Visitor Spending Ledger](https://www.postmillenniumrenaissance.com/studies/)**, which lists each study with its source page, a unit (day, trip, night, visit) and a confidence tier. Its out-of-town figures expressed *per day* run from $90 (Helena, via the TPL Green Paper, tier M) to $200 (CAMBA, Hadley & Trechter 2020, tier V). Those two numbers are `PROXY_LOW` and `PROXY_HIGH` in the tool.
+No peer-reviewed visitor spending study exists for public skateparks or pump tracks. **P2's spend values are compared against four mountain bike trail studies. They are a stand-in, not the source: the presets ($20–$85/visitor-day) are the author's judgment, scaled down from these, and the page says so.** The four are copied into the `BENCHMARKS` registry in `index.html` (from the PMR [Trail Visitor Spending Ledger](https://www.postmillenniumrenaissance.com/studies/), on purpose, so the tool does not depend on another page) and rendered on the page with citation, page, link, tier and a plain caveat. `PROXY_LOW` ($90) and `PROXY_HIGH` ($200) are derived from the list, not typed.
+
+| Per-day, out-of-town | Study | Where | Tier |
+|---|---|---|---|
+| $90–$111 | Sage, J. L., & Nickerson, N. P. (2018). *Trail usage and value: a Helena, MT case study.* ITRR, University of Montana. https://scholarworks.umt.edu/itrr_pubs/365/ . Read via the TPL Green Paper (*Economic Benefits of Mountain Biking*, March 2025, https://www.tpl.org/wp-content/uploads/2025/03/Economic-Benefits-of-Mountain-Biking.pdf); the original was not reviewed. | TPL appendix p.29 (range $90.29–$110.59 confirmed in the Green Paper text, 2026-10-21) | M |
+| $138.49 | Boozer, B. B., & Self, M. (2012). *An economic and impact analysis of the Coldwater Mountain Bike Trail.* Jacksonville State University, for the Calhoun County Community Development Corporation. https://headwaterseconomics.org/wp-content/uploads/Trail_Study_13-coldwater-mountain-bike-trail.pdf | pp.34–35 ($138.49 confirmed in the report text, 2026-10-21) | V |
+| $143.27–$150 | Eades, D., & Arbogast, D. (2019). *Economic impacts of mountain biking and bike trail systems in West Virginia.* WVU Extension (title taken from the file name; later versions are retitled "…Bike Trail Events and Festivals…"). https://extension.wvu.edu/files/d/8d8adea5-a36b-4670-a729-4cc9143add34/economic-impacts-of-mountain-biking-and-bike-trail-systems-in-west-virginia-051619.pdf | Tables 9–10, pp.10–11 | M |
+| $200 | Hadley, S., & Trechter, D. (2020). *Chequamegon Area Mountain Bike Association economic impact and user experience survey: summary, 2020* (Survey Research Center Report 2020/9). UW–River Falls. https://static1.squarespace.com/static/67a3d849527a3f4f3bc9c832/t/67f7182822b7236bc1b9bca3/1744246831440/Survey-Report-2020-Final.pdf | Table 1-3, p.16 ($200/day confirmed in the report text, 2026-10-21) | V |
+
+Tiers (the Ledger's definitions): **V** the study's own direct rider survey; **M** a blended figure, or read through a secondary compilation. **The four are not independent**: West Virginia's $150 is the authors' rule of thumb built partly from Coldwater. The West Virginia link returned HTTP 403 to an automated fetch on 2026-10-21 and was not opened.
+
+The Ledger's other per-day rows, with their sources, are at https://www.postmillenniumrenaissance.com/studies/ .
 
 Three figures that earlier versions of this README (and the page) cited could **not** be traced on 2026-10-21 and are no longer used as benchmarks:
 
@@ -163,7 +174,7 @@ The table below lists every parameter for each facility type and scale combinati
 - **sR (Surplus Rate)** [tag J · Judgment]: Annual surplus rate applied to construction cost for P1. Derived from Kemp (2025) Lauridsen baseline of 7.9%/yr, scaled down by facility size and destination-draw characteristics.
 - **vP (Visitor Fraction)** [tag J · Judgment]: Percentage of daily users estimated to be out-of-town visitors for P2 calculation. Conservative relative to MTB destination benchmarks.
 - **vS (Direct spend/visitor-day)** [tag P · Proxy]: Estimated average daily spending by an out-of-town visitor (gas, food, lodging, retail), before the multiplier. Scaled from MTB proxy data by judgment.
-- **Multiplier** [tag C · Cited, unverified]: 1.72×, attributed to OIA (2022); could not be located. Counts suppliers' sales too, so it may overstate a small local facility.
+- **Multiplier** [tag J · Judgment]: 1.72×, **a starting point, not a measured value**, adjustable like every other input (1.0 shows direct spending only). Once attributed to OIA (2022); that could not be verified. Counts suppliers' sales too, so it may overstate a small local facility.
 
 ### Scale definitions
 
@@ -218,7 +229,7 @@ The faster payback for pump tracks vs. skateparks at equivalent scale comes from
 
 ## What the page shows
 
-- A per-field tag on every assumption (J · Judgment, P · Proxy, C · Cited), and a P1/P2 badge with a letter and a word (never color alone).
+- A per-field tag on every assumption (J · Judgment, P · Proxy), a V/M tier on each benchmark study,, and a P1/P2 badge with a letter and a word (never color alone).
 - **Two separate results (P1 user value, P2 visitor spending)**, each with its own payback, annual value ÷ cost, 20-year multiple and timeline. P2 also shows direct spending before the multiplier.
 - An optional **combined total**, off by default (checkbox).
 - Assumptions panel collapsed by default; it opens for print.
@@ -236,7 +247,7 @@ The faster payback for pump tracks vs. skateparks at equivalent scale comes from
 | Kemp: $6.2M cost | **Not in the abstract.** Press: $6.1M expected / $6.3M funding goal (2019); links from search results, not opened |
 | Kemp: size, sample, dollar year | Not stated in the abstract |
 | Whistler $94–$133 per visitor-day | **Could not be traced; removed as a benchmark.** Replaced by the Ledger's per-day range ($90–$200) |
-| Ledger per-day range ($90 Helena, $200 CAMBA) | Read from the Ledger's own data; the Ledger itself notes its figures were not all checked against source documents |
+| Four benchmark studies (Helena, Coldwater, West Virginia, CAMBA) | Titles, authors and figures confirmed in the documents for Coldwater ($138.49), Helena via the TPL Green Paper ($90.29–$110.59) and CAMBA ($200); West Virginia not opened (HTTP 403). The Ledger itself notes not every figure was checked against its source |
 | NW Arkansas, TPL 2025, $416 per trip | Not verified |
 | OIA (2022) 1.72× multiplier | **Not found in OIA's published reports**; kept as an editable default, tagged unverified |
 | Kemp citation (title, author, 4(1):90, DOI) | Checked against the publisher's page; DOI resolves to the article |
@@ -290,7 +301,7 @@ and $54.1 million in annual labor income across 13 locations.
 
 Whistler Bikepark visitor studies. **The $94–$133 range could not be traced and is no longer used.** (See Source data.)
 
-**Linkable P2 source:** PMR Trail Visitor Spending Ledger, https://www.postmillenniumrenaissance.com/studies/
+**P2 benchmark studies:** the four listed under *Source data*; more in the PMR Trail Visitor Spending Ledger, https://www.postmillenniumrenaissance.com/studies/
 
 **Cycling infrastructure health & social ROI** (background reading; not used by the calculator):
 

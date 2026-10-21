@@ -22,6 +22,8 @@
     ==== ONE CONTIGUOUS DATA BLOCK ====
     · SHARE_BASE / PMR_ORIGINS . canonical address for copied links; message allow-list
     · MULT_DEFAULT, KEMP_*, PROXY_* the anchors the checks compare against
+    · BENCHMARKS ............... the four MTB studies P2 is compared against, with
+                                 citations, links and caveats (one entry each)
     · PILLARS .................. labels for the three result blocks (P1, P2, combined)
     · CLIMATES ................. operating-days -> climate label
     · TYPE_LABELS / SCALE_LABELS the two button rows
@@ -211,6 +213,15 @@
     }
 
     .meth { margin-top: 18px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; }
+    .bench { list-style: none; margin: 12px 0 0; }
+    .bench li { padding: 10px 0 10px 12px; border-left: 2px solid var(--border2); margin-top: 8px; font-size: 12px; color: var(--t2); line-height: 1.55; }
+    .bench span { display: block; }
+    .bench .bfig { display: inline; font-family: var(--mono); font-size: 13px; font-weight: 600; color: var(--t1); margin-right: 8px; }
+    .bench .btag { display: inline-block; }
+    .bench .bcite { margin-top: 4px; }
+    .bench .blinks { margin-top: 3px; }
+    .bench .blinks a { color: var(--accent); }
+    .bench .bcav { margin-top: 3px; color: var(--t3); font-style: italic; }
     .srcs { display: grid; grid-template-columns: minmax(0,1fr); gap: 18px; margin-bottom: 18px; }
     .more { margin-top: 16px; border: 1px solid var(--border); border-radius: 8px; }
     .more > summary { cursor: pointer; min-height: 40px; padding: 10px 14px; font-size: 12px; color: var(--t2); }
@@ -254,7 +265,8 @@
       h1 { color: #111 !important; }
       h1 span, .eyebrow { color: #1d4ed8 !important; }
       .intro, .pform, .psrc, .mtext, .mname, .hint, .assume-lead, .alabel, .aunit, .ssub, .mlabel, .bticks, .barrow, .bnote, .disclaimer, .flags li, .psrc strong, .mtext strong, .disclaimer strong, .direct, .direct b, .more > summary { color: #333 !important; }
-      .psrc a, .mtext a { color: #1d4ed8 !important; }
+      .psrc a, .mtext a, .bench .blinks a { color: #1d4ed8 !important; }
+      .bench li, .bench .bfig, .bench .bcav { color: #333 !important; }
       .badge.b { background: #dbeafe !important; color: #1e40af !important; }
       .badge.a { background: #fef3c7 !important; color: #92400e !important; }
       .btag { color: #333 !important; border-color: #999 !important; }
@@ -390,9 +402,9 @@
           <div class="pform" id="p2f"></div>
           <div class="pmetrics" id="p2-m"></div>
           <div class="psrc">
-            <strong class="warn">Informed by</strong> mountain bike trail visitor spending, listed study by study in the
-            <a href="https://www.postmillenniumrenaissance.com/studies/" target="_top">Trail Visitor Spending Ledger</a>. It is not a pump-track study: none exists.
-            The out-of-town share and spend values are assumptions, and the 1.72&times; multiplier could not be verified. Only new money counts; local spending moved from elsewhere is not netted out.
+            <strong class="warn">Informed by</strong> four mountain bike trail studies ($90&ndash;$200 per visitor-day), cited under &ldquo;Where the numbers come from&rdquo; below.
+            This is not a pump-track study: none exists. The spend values are scaled down from those studies by judgment, and the out-of-town share is an assumption.
+            The 1.72&times; multiplier is a starting point, not a measured value; change it in the assumptions panel. Only new money counts; local spending moved from elsewhere is not netted out.
           </div>
         </div>
       </div>
@@ -428,9 +440,9 @@
         <div class="mbadge a">P2</div>
         <div>
           <p class="mname">P2 data is informed by</p>
-          <p class="mtext">Mountain bike trail visitor spending, study by study, in PMR&rsquo;s <a href="https://www.postmillenniumrenaissance.com/studies/" target="_top">Trail Visitor Spending Ledger</a>.
-          Its per-day out-of-town figures run from about $90 to $200. No study has measured pump-track or skatepark visitors, so spend is scaled down by judgment, and the out-of-town share is an assumption.
-          The 1.72&times; multiplier is attributed to the Outdoor Industry Association (2022); we could not verify it.</p>
+          <p class="mtext">Four mountain bike trail studies. No study has measured pump-track or skatepark visitors, so these are a stand-in, not a source: they show what out-of-town riders spend per day at trail networks ($90 to $200), and we scaled our preset spend values down from that by judgment. The out-of-town share is an assumption with no study behind it. The four are not fully independent: the West Virginia figure is partly built from Coldwater.</p>
+          <ul class="bench" id="bench"></ul>
+          <p class="mtext" style="margin-top:12px"><strong>The 1.72&times; multiplier</strong> is a starting point, not a measured value, and you can change it like any other input (1.0 shows direct spending only). It was once attributed to the Outdoor Industry Association (2022); we could not verify that. More studies, with each source page, are in PMR&rsquo;s <a href="https://www.postmillenniumrenaissance.com/studies/" target="_top">Trail Visitor Spending Ledger</a>.</p>
         </div>
       </div>
     </div>
@@ -441,7 +453,7 @@
       <div class="more-body">
         <p class="mtext"><strong>P1</strong> = construction cost &times; surplus rate. Kemp&rsquo;s result is driven by how often and how far people travel, not by what the park cost, so tying it to cost is this tool&rsquo;s own device. Operating days and daily users do not affect P1.</p>
         <p class="mtext"><strong>P2</strong> = average daily users &times; out-of-town share &times; operating days &times; spend per visitor-day &times; multiplier. Pump tracks serve many children and families, so adult MTB spending is a weak guide to their values; facility scale moves spend more than type does.</p>
-        <p class="mtext"><strong>Tags:</strong> J &middot; Judgment: chosen by the author, no source. P &middot; Proxy: scaled from a study of a different activity. C &middot; Cited: attributed to a published figure; check the note beside it. Full sources and what has been verified are in the project README on GitHub.</p>
+        <p class="mtext"><strong>Tags on assumptions:</strong> J &middot; Judgment: chosen by the author, no source. P &middot; Proxy: scaled from a study of a different activity. <strong>Tiers on the four studies:</strong> V &middot; Verified: the study&rsquo;s own direct rider survey. M &middot; Medium: a blended figure, or read through a secondary compilation. Full sources and what has been verified are in the project README on GitHub.</p>
       </div>
     </details>
 
@@ -480,17 +492,50 @@ const SHARE_BASE = 'https://www.postmillenniumrenaissance.com/pump-track/';
 /* Only these origins may drive the tool by postMessage. */
 const PMR_ORIGINS = ['https://www.postmillenniumrenaissance.com', 'https://postmillenniumrenaissance.com'];
 
-const MULT_DEFAULT = 1.72;            // attributed to OIA (2022); could not be verified
+const MULT_DEFAULT = 1.72;            // a starting point, adjustable. Once attributed to OIA (2022); that could not be verified
 const KEMP_SURPLUS = 488000;          // $/yr, Kemp (2025), adults only
 const KEMP_COST = 6200000;            // $, this tool's ratio denominator: press reports, NOT in Kemp
 const KEMP_RATE = KEMP_SURPLUS / KEMP_COST;   // 7.87%; a rate above this has no support in the source
-/* MTB benchmark for the spend checks: the lowest and highest per-DAY out-of-town
-   figures in PMR's Trail Visitor Spending Ledger (Helena $90, CAMBA $200). It
-   replaces an earlier "$94–$133, Whistler" range whose source could not be traced.
-   Per-day only: the ledger's per-trip, per-visit and per-night rows are not
-   comparable. Re-check these two numbers if the ledger changes. */
-const PROXY_LOW = 90;                 // $/visitor-day
-const PROXY_HIGH = 200;               // $/visitor-day
+/* ==== BENCHMARKS — the four mountain bike trail studies P2's spend values are
+   compared against. They are NOT the source of the presets: no pump-track or
+   skatepark visitor study exists, and the preset spends ($20–$85) are the author's
+   judgment, scaled down from these. Copied from the PMR Trail Visitor Spending
+   Ledger on purpose, so this tool does not depend on another page; re-check them
+   against the Ledger if either changes.
+     lo, hi   out-of-town spending per visitor-DAY, $ (hi null = a single figure).
+              Per-day only: per-trip, per-visit and per-night figures are not comparable.
+     tier     V = the study's own direct rider survey; M = a blended figure, or read
+              through a secondary compilation (the Ledger's definitions)
+     where    page or table of the figure
+     via      a compilation the figure was actually read from, when not the original
+     caveat   one plain sentence a reader should know before leaning on it
+   TO ADD A STUDY: one entry here; the list on the page and the checks update.
+   ============================================================================ */
+const BENCHMARKS = [
+  { id: 'helena', lo: 90, hi: 111, tier: 'M', where: 'TPL appendix, p.29',
+    cite: 'Sage, J. L., & Nickerson, N. P. (2018). Trail usage and value: a Helena, MT case study. Institute for Tourism and Recreation Research, University of Montana.',
+    url: 'https://scholarworks.umt.edu/itrr_pubs/365/',
+    via: { label: 'Trust for Public Land, Economic Benefits of Mountain Biking (2025)', url: 'https://www.tpl.org/wp-content/uploads/2025/03/Economic-Benefits-of-Mountain-Biking.pdf' },
+    caveat: 'Read through the Trust for Public Land compilation; we did not review the original report.' },
+  { id: 'coldwater', lo: 138.49, hi: null, tier: 'V', where: 'pp.34–35',
+    cite: 'Boozer, B. B., & Self, M. (2012). An economic and impact analysis of the Coldwater Mountain Bike Trail. Jacksonville State University, for the Calhoun County Community Development Corporation.',
+    url: 'https://headwaterseconomics.org/wp-content/uploads/Trail_Study_13-coldwater-mountain-bike-trail.pdf',
+    caveat: 'Survey of self-selected enthusiasts, lodging included. The authors judged it high and used a lower blended figure ($104.25) in their own projections.' },
+  { id: 'wv', lo: 143.27, hi: 150, tier: 'M', where: 'Tables 9–10, pp.10–11',
+    cite: 'Eades, D., & Arbogast, D. (2019). Economic impacts of mountain biking and bike trail systems in West Virginia. West Virginia University Extension.',
+    url: 'https://extension.wvu.edu/files/d/8d8adea5-a36b-4670-a729-4cc9143add34/economic-impacts-of-mountain-biking-and-bike-trail-systems-in-west-virginia-051619.pdf',
+    caveat: '$150 is the authors\' rule of thumb built from other trails\' figures (Coldwater among them), not a West Virginia rider survey. $143.27 is race and event riders, likely above a typical day. Our automated check could not open this link; open it in a browser.' },
+  { id: 'camba', lo: 200, hi: null, tier: 'V', where: 'Table 1-3, p.16',
+    cite: 'Hadley, S., & Trechter, D. (2020). Chequamegon Area Mountain Bike Association economic impact and user experience survey: summary, 2020 (Survey Research Center Report 2020/9). University of Wisconsin–River Falls.',
+    url: 'https://static1.squarespace.com/static/67a3d849527a3f4f3bc9c832/t/67f7182822b7236bc1b9bca3/1744246831440/Survey-Report-2020-Final.pdf',
+    caveat: 'Spending respondents expected, not receipts (152 respondents). A mean that the authors calculated as trip spending divided by days in the area.' }
+];
+const TIER_WORDS = { V: 'Verified', M: 'Medium' };
+
+/* Lowest and highest per-day figure across BENCHMARKS, used by the spend checks.
+   Derived, never typed, so the checks cannot drift from the list on the page. */
+const PROXY_LOW  = Math.min(...BENCHMARKS.map(b => b.lo));
+const PROXY_HIGH = Math.max(...BENCHMARKS.map(b => b.hi || b.lo));
 
 /* Operating days -> label. First entry whose min is <= days wins, so keep it
    sorted high to low and end on min:0. */
@@ -564,8 +609,8 @@ const FIELDS = [
 const ASSUMPTIONS = [
   { key: 'sR',   label: 'Surplus rate (P1)',            unit: '% of cost / yr',     step: 0.1,  basis: 'J · Judgment', note: 'Scaled down from the 7.9% Kemp-based ratio by the author.' },
   { key: 'vP',   label: 'Out-of-town share (P2)',       unit: '% of daily users',   step: 0.1,  basis: 'J · Judgment', note: 'No source. Share of users assumed to travel in because of the facility.' },
-  { key: 'vS',   label: 'Direct spend per visitor-day', unit: '$ before multiplier', step: 1,    basis: 'P · Proxy',    note: 'Scaled down by judgment from MTB trail spending ($90–$200/day in the Ledger).' },
-  { key: 'mult', label: 'Economic multiplier (P2)',     unit: '× direct spend',     step: 0.01, basis: 'C · Cited, unverified', note: 'Attributed to OIA (2022); we could not locate it. Counts suppliers\' sales too, so it may overstate a small local facility.' }
+  { key: 'vS',   label: 'Direct spend per visitor-day', unit: '$ before multiplier', step: 1,    basis: 'P · Proxy',    note: 'Scaled down by judgment from the four benchmark studies ($90–$200/day), listed below.' },
+  { key: 'mult', label: 'Economic multiplier (P2)',     unit: '× direct spend',     step: 0.01, basis: 'J · Judgment', note: 'A starting point, not a measured value. Change it like any other input; 1.0 shows direct spending only. It counts suppliers\' sales too, so it may overstate a small local facility.' }
 ];
 
 /* Order of the fields after the type/scale/days/pillars in a shared link.
@@ -618,6 +663,14 @@ function buildButtons(){
       '<div class="arowin"><input type="number" id="a-' + a.key + '" inputmode="decimal" min="0" step="' + a.step + '" oninput="onField(\'' + a.key + '\')">' +
       '<span class="aunit">' + a.unit + '</span></div>' +
       '<p class="hint">' + a.note + '</p><p class="hint ed" id="pn-' + a.key + '"></p></div>').join('');
+  $('bench').innerHTML = BENCHMARKS.map(b => {
+    const fig = '$' + Math.round(b.lo) + (b.hi ? '\u2013$' + Math.round(b.hi) : '');
+    return '<li><span class="bfig">' + fig + '/day</span> <span class="btag">Tier ' + b.tier + ' \u00b7 ' + TIER_WORDS[b.tier] + '</span>' +
+      '<span class="bcite">' + b.cite + ' ' + b.where + '.</span>' +
+      '<span class="blinks"><a href="' + b.url + '" target="_blank" rel="noopener noreferrer">Open the study</a>' +
+      (b.via ? ' &middot; read via <a href="' + b.via.url + '" target="_blank" rel="noopener noreferrer">' + b.via.label + '</a>' : '') + '</span>' +
+      '<span class="bcav">' + b.caveat + '</span></li>';
+  }).join('');
   let ticks = '';
   for(let y = 0; y <= HORIZON_YEARS; y += TICK_YEARS) ticks += '<span>' + y + (y === HORIZON_YEARS ? ' yrs' : '') + '</span>';
   Object.keys(PILLARS).forEach(id => {
@@ -748,8 +801,8 @@ function syncEdited(sR, vS){
 
   const flags = [];
   if(sR > KEMP_RATE + 1e-9) flags.push(['Check', 'The surplus rate is above the ' + (KEMP_RATE * 100).toFixed(1) + '% baseline derived from Kemp (2025). The source does not support a higher rate.']);
-  if(vS >= PROXY_LOW) flags.push(['Check', 'Direct spend of $' + vS + '/day is at or above the lowest per-day MTB figure in the Ledger ($' + PROXY_LOW + '). That is not a discount for a wheeled-sport facility.']);
-  else if(vS >= PROXY_LOW * INFO_FRACTION) flags.push(['Note', 'Direct spend of $' + vS + '/day is ' + Math.round(vS / PROXY_LOW * 100) + '% of the lowest per-day MTB figure in the Ledger ($' + PROXY_LOW + '–$' + PROXY_HIGH + '). Expect questions about it.']);
+  if(vS >= PROXY_LOW) flags.push(['Check', 'Direct spend of $' + vS + '/day is at or above the lowest of the four benchmark studies ($' + PROXY_LOW + '). That is not a discount for a wheeled-sport facility.']);
+  else if(vS >= PROXY_LOW * INFO_FRACTION) flags.push(['Note', 'Direct spend of $' + vS + '/day is ' + Math.round(vS / PROXY_LOW * 100) + '% of the lowest of the four benchmark studies ($' + PROXY_LOW + '–$' + PROXY_HIGH + '). Expect questions about it.']);
   $('flags').innerHTML = flags.map(f => '<li><b>' + f[0] + ':</b> ' + f[1] + '</li>').join('');
 }
 
