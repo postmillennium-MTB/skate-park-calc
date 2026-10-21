@@ -10,8 +10,9 @@
   <head> / <style>
     · THEME .................... one dark palette (--bg … --t3). t2/t3 are tuned to
                                  clear WCAG AA (4.5:1) on --surface AND --surface2
-    · COMPONENTS ............... config card, assumptions panel, pillar cards,
-                                 summary card, sticky phone bar, methodology
+    · COMPONENTS ............... config card, assumptions panel, pillar cards
+                                 (each with its own payback), optional combined
+                                 card, sticky phone bar, methodology
     · PRINT .................... last in <style>; everything inside @media print
   <body>
     · markup is mostly shells. Facility-type / scale buttons and the assumption
@@ -20,7 +21,8 @@
   <script>
     ==== ONE CONTIGUOUS DATA BLOCK ====
     · SHARE_BASE / PMR_ORIGINS . canonical address for copied links; message allow-list
-    · MULT_DEFAULT, KEMP_*, PROXY_* the published anchors the checks compare against
+    · MULT_DEFAULT, KEMP_*, PROXY_* the anchors the checks compare against
+    · PILLARS .................. labels for the three result blocks (P1, P2, combined)
     · CLIMATES ................. operating-days -> climate label
     · TYPE_LABELS / SCALE_LABELS the two button rows
     · D ........................ the nine presets (type x scale)
@@ -96,7 +98,7 @@
 
     .grid { display: grid; grid-template-columns: minmax(0,1fr); gap: 18px; align-items: start; }
     .results-col { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
-    @media (min-width: 641px) { .grid { grid-template-columns: minmax(0,1fr) minmax(0,1.25fr); } .meth-grid { grid-template-columns: 1fr 1fr !important; } }
+    @media (min-width: 641px) { .grid { grid-template-columns: minmax(0,1fr) minmax(0,1.25fr); } }
 
     .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; }
     .clabel { display: block; font-family: var(--mono); font-size: 10px; font-weight: 600; letter-spacing: 0.12em; color: var(--t3); text-transform: uppercase; margin-bottom: 10px; }
@@ -184,9 +186,12 @@
     .metric { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 12px; }
     .mlabel { font-size: 11px; color: var(--t3); margin-bottom: 4px; line-height: 1.4; }
     .mval { font-family: var(--mono); font-size: 20px; font-weight: 600; }
-    .mix { margin-bottom: 16px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; }
-    .mixrow { display: flex; justify-content: space-between; gap: 10px; font-size: 12px; color: var(--t2); padding: 3px 0; }
-    .mixrow span:last-child { font-family: var(--mono); font-size: 11px; color: var(--t1); text-align: right; }
+    .combo { display: flex; align-items: flex-start; gap: 10px; min-height: 40px; padding: 10px 14px; background: var(--surface); border: 1px dashed var(--border2); border-radius: 12px; font-size: 12px; color: var(--t2); line-height: 1.5; cursor: pointer; }
+    .combo input { width: 20px; height: 20px; margin-top: 1px; flex-shrink: 0; accent-color: var(--accent); }
+    .combo b { color: var(--t1); font-weight: 500; }
+    .direct { font-size: 12px; color: var(--t2); margin: -6px 0 14px; }
+    .direct b { font-family: var(--mono); font-weight: 500; color: var(--t1); }
+    .pmetrics { margin: 4px 0 14px; }
     .barrow { display: flex; justify-content: space-between; gap: 10px; font-family: var(--mono); font-size: 10px; color: var(--t3); margin-bottom: 6px; }
     .barbg { height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; }
     .barfill { height: 100%; background: var(--accent); border-radius: 4px; transition: width 0.45s ease; width: 0%; }
@@ -202,11 +207,16 @@
       .wrap { padding-bottom: 110px; }
       .sticky { display: flex; justify-content: space-between; gap: 12px; position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; padding: 10px 16px; background: var(--surface); border-top: 2px solid var(--accent); font-size: 12px; color: var(--t2); }
       .sticky b { font-family: var(--mono); font-size: 15px; color: var(--accent); display: block; }
+      .sticky span { min-width: 0; }
     }
 
     .meth { margin-top: 18px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; }
+    .srcs { display: grid; grid-template-columns: minmax(0,1fr); gap: 18px; margin-bottom: 18px; }
+    .more { margin-top: 16px; border: 1px solid var(--border); border-radius: 8px; }
+    .more > summary { cursor: pointer; min-height: 40px; padding: 10px 14px; font-size: 12px; color: var(--t2); }
+    .more-body { padding: 0 14px 14px; }
+    .more-body p { margin-top: 10px; }
     .mtitle { font-family: var(--mono); font-size: 10px; font-weight: 600; letter-spacing: 0.12em; color: var(--t3); text-transform: uppercase; margin-bottom: 18px; }
-    .meth-grid { display: grid; grid-template-columns: minmax(0,1fr); gap: 22px; }
     .mitem { display: flex; gap: 12px; }
     .mbadge { flex-shrink: 0; width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 11px; font-weight: 600; }
     .mbadge.b { background: var(--accent-bg); color: var(--accent); }
@@ -232,8 +242,9 @@
       body { background: #fff !important; color: #111; }
       .arow, .sticky, .topnav, .tog, input[type="range"], .tog::before { display: none !important; }
       .printonly { display: block !important; margin-top: 18px; font-size: 11px; color: #444; line-height: 1.6; }
-      .card, .pcard, .scard, .meth, .assume { background: #fff !important; border: 1px solid #ddd !important; }
+      .card, .pcard, .scard, .meth, .assume, .more { background: #fff !important; border: 1px solid #ddd !important; }
       .scard { border-top: 2px solid #1d4ed8 !important; }
+      .combo { display: none !important; }
       .metric, input[type="number"] { background: #f7f7f7 !important; border: 1px solid #ddd !important; color: #111 !important; }
       .barbg { background: #e5e5e5 !important; }
       .pval, .mval { color: #111 !important; }
@@ -242,7 +253,7 @@
       .barfill.over { background: #b45309 !important; }
       h1 { color: #111 !important; }
       h1 span, .eyebrow { color: #1d4ed8 !important; }
-      .intro, .pform, .psrc, .mtext, .mname, .hint, .assume-lead, .alabel, .aunit, .ssub, .mlabel, .mixrow, .mixrow span:last-child, .bticks, .barrow, .bnote, .disclaimer, .flags li, .psrc strong, .mtext strong, .disclaimer strong { color: #333 !important; }
+      .intro, .pform, .psrc, .mtext, .mname, .hint, .assume-lead, .alabel, .aunit, .ssub, .mlabel, .bticks, .barrow, .bnote, .disclaimer, .flags li, .psrc strong, .mtext strong, .disclaimer strong, .direct, .direct b, .more > summary { color: #333 !important; }
       .psrc a, .mtext a { color: #1d4ed8 !important; }
       .badge.b { background: #dbeafe !important; color: #1e40af !important; }
       .badge.a { background: #fef3c7 !important; color: #92400e !important; }
@@ -268,7 +279,7 @@
   <div style="margin-bottom:36px;">
     <p class="eyebrow">Municipal investment tool</p>
     <h1>Skatepark and Pump Track <span>ROI</span> Calculator</h1>
-    <p class="intro">Estimate the annual economic value of a public skatepark, pump track, or combined wheel park. Built for advocates presenting to city councils, parks departments, and planning committees. Every assumption is shown and editable, and each is tagged with how it was obtained. Toggle pillars on or off to see how much of the result rests on each.</p>
+    <p class="intro">Estimate the annual economic value of a public skatepark, pump track, or combined wheel park. Built for advocates presenting to city councils, parks departments, and planning committees. Every assumption is shown and editable, and each is tagged with how it was obtained. User value and visitor spending are shown separately because they measure different things; a combined total is optional.</p>
   </div>
 
   <div class="grid">
@@ -314,7 +325,7 @@
         <p class="hint it">Drives visitor spending (P2) only; P1 ignores it.</p>
       </div>
 
-      <details class="assume" id="assume" open>
+      <details class="assume" id="assume">
         <summary>Assumptions behind this scenario</summary>
         <div class="assume-body">
           <p class="assume-lead">These come from the preset for the facility type and scale you picked. Change one to test it: edited values are outlined, flagged in the results, and carried in a copied link. Each is tagged with how it was obtained.</p>
@@ -333,29 +344,30 @@
 
     <div class="results-col">
 
+      <p class="custom" id="custom" hidden></p>
+
       <div class="pcard" id="p1c">
         <div class="phdr">
           <div style="min-width:0;">
-            <p class="ptitle">P1 &middot; Direct user economic surplus</p>
-            <p class="psub">Consumer willingness-to-pay value (welfare, not dollars spent)</p>
+            <p class="ptitle">P1 &middot; User value (economic surplus)</p>
+            <p class="psub">What users gain, in dollars. Not money spent.</p>
           </div>
           <div class="trow">
             <span class="badge b"><span class="bdot"></span>A &middot; Anchored, rates assumed</span>
-            <span class="tog on" id="p1t" role="switch" aria-checked="true" aria-label="Include pillar 1, direct user surplus" tabindex="0"
+            <span class="tog on" id="p1t" role="switch" aria-checked="true" aria-label="Show pillar 1, user value" tabindex="0"
               onclick="togP('p1')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();togP('p1')}"></span>
           </div>
         </div>
         <div class="pbody">
           <div class="pval" id="p1v">—</div>
           <div class="pform" id="p1f"></div>
+          <div class="pmetrics" id="p1-m"></div>
           <div class="psrc">
-            <strong>One anchor.</strong> Kemp (2025), <a href="https://www.anserpress.org/journal/jea/4/1/90" target="_blank" rel="noopener noreferrer"><em>Journal of Economic Analysis</em> 4(1), 66&ndash;82</a>:
-            a travel-cost model of Lauridsen Skatepark, Des Moines IA. It reports about $488K per year and $61 per adult user-day.
-            <strong class="warn">What is not from Kemp:</strong> the $6.2M construction cost is not in the study&rsquo;s abstract. Press reports of the 2019 budget give
-            <a href="https://www.businessrecord.com/skatepark-lands-500k-state-grant-closes-in-on-doubled-6-1-million-budget" target="_blank" rel="noopener noreferrer">$6.1M expected</a>
-            and a <a href="https://www.crestonnews.com/2019/10/14/des-moines-skatepark-reaches-6-3m-funding-goal/arlnixf" target="_blank" rel="noopener noreferrer">$6.3M funding goal</a>,
-            so the 7.9%/yr baseline is a ratio of a study figure to a news figure. The 3.0&ndash;7.2% rates here are judgment, not derived, and applying a
-            skatepark study to a pump track is analogy: no pump-track travel-cost study exists. Kemp counts adults only.
+            <strong>Informed by</strong> Kemp (2025), a study of one 88,000 sq ft skatepark
+            (<a href="https://www.anserpress.org/journal/jea/4/1/90" target="_blank" rel="noopener noreferrer">journal page</a>).
+            Its $6.2M cost is not in the study (press: <a href="https://www.businessrecord.com/skatepark-lands-500k-state-grant-closes-in-on-doubled-6-1-million-budget" target="_blank" rel="noopener noreferrer">$6.1M budget</a>,
+            <a href="https://www.crestonnews.com/2019/10/14/des-moines-skatepark-reaches-6-3m-funding-goal/arlnixf" target="_blank" rel="noopener noreferrer">$6.3M goal</a>),
+            and the 3.0&ndash;7.2% rates are our judgment. No study has measured a pump track.
           </div>
         </div>
       </div>
@@ -363,106 +375,75 @@
       <div class="pcard" id="p2c">
         <div class="phdr">
           <div style="min-width:0;">
-            <p class="ptitle">P2 &middot; Visitor &amp; tourism spending</p>
-            <p class="psub">Out-of-town visitor spending, with multiplier</p>
+            <p class="ptitle">P2 &middot; Local visitor spending (economic impact)</p>
+            <p class="psub">What out-of-town visitors spend locally, with multiplier</p>
           </div>
           <div class="trow">
             <span class="badge a"><span class="bdot"></span>P &middot; Proxy, inputs assumed</span>
-            <span class="tog on" id="p2t" role="switch" aria-checked="true" aria-label="Include pillar 2, visitor spending" tabindex="0"
+            <span class="tog on" id="p2t" role="switch" aria-checked="true" aria-label="Show pillar 2, visitor spending" tabindex="0"
               onclick="togP('p2')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();togP('p2')}"></span>
           </div>
         </div>
         <div class="pbody">
           <div class="pval" id="p2v">—</div>
+          <p class="direct">Direct spending, before the multiplier: <b id="p2d">—</b></p>
           <div class="pform" id="p2f"></div>
+          <div class="pmetrics" id="p2-m"></div>
           <div class="psrc">
-            <strong class="warn">Mountain bike tourism proxy; the inputs are assumptions.</strong> No visitor-spending study exists for pump tracks or skateparks.
-            The benchmark is bike-park and trail-network spending ($94&ndash;$133 per visitor-day, Whistler, as cited in NW Arkansas studies; not re-checked here).
-            The out-of-town share (1.5&ndash;4%) has no source. The spend values are scaled down from the benchmark by judgment. The 1.72&times; multiplier is a national
-            outdoor-recreation figure (OIA, 2022) and may overstate a small local facility. Spending counts only new money from people assumed to travel because of the
-            facility; local spending displaced from elsewhere is not netted out.
+            <strong class="warn">Informed by</strong> mountain bike trail visitor spending, listed study by study in the
+            <a href="https://www.postmillenniumrenaissance.com/studies/" target="_top">Trail Visitor Spending Ledger</a>. It is not a pump-track study: none exists.
+            The out-of-town share and spend values are assumptions, and the 1.72&times; multiplier could not be verified. Only new money counts; local spending moved from elsewhere is not netted out.
           </div>
         </div>
       </div>
 
-      <div class="scard">
+      <label class="combo" for="showcombo">
+        <input type="checkbox" id="showcombo" onchange="onCombo()">
+        <span><b>Also show a combined total.</b> Off by default: P1 measures what users gain and P2 what visitors spend, so adding them mixes two measures. For scale only.</span>
+      </label>
+
+      <div class="scard" id="combo-card" hidden>
         <p class="slabel">Combined annual value</p>
         <div class="stotal" id="stot">—</div>
-        <p class="ssub">per year &middot; community economic value, not municipal revenue. P1 is welfare and P2 is spending: different kinds of value, shown together for scale, not as one financial return. Gross, undiscounted, before maintenance and operating cost.</p>
-        <p class="custom" id="custom" hidden></p>
-        <div class="metrics">
-          <div class="metric">
-            <p class="mlabel">Years of annual value to equal cost</p>
-            <p class="mval" id="spb">—</p>
-          </div>
-          <div class="metric">
-            <p class="mlabel">Annual value &divide; cost</p>
-            <p class="mval" id="sret">—</p>
-          </div>
-          <div class="metric">
-            <p class="mlabel" id="mult-label">20-year value &divide; cost</p>
-            <p class="mval" id="smult">—</p>
-          </div>
-        </div>
-        <div class="mix">
-          <p class="mlabel">If only one pillar holds</p>
-          <div class="mixrow"><span>P1 surplus alone</span><span id="mx1">—</span></div>
-          <div class="mixrow"><span>P2 visitor spending alone</span><span id="mx2">—</span></div>
-        </div>
-        <div class="barrow">
-          <span id="btitle">Where cost is covered on a 20-year timeline</span>
-          <span id="bpct">—</span>
-        </div>
-        <div class="barbg" id="bbar" role="img" aria-label="Payback point on a 20-year timeline"><div class="barfill" id="bfill"></div></div>
-        <div class="bticks" id="bticks"></div>
-        <p class="bnote">Assumes the same annual value every year: no growth, discounting, ramp-up or inflation.</p>
+        <p class="ssub">per year &middot; P1 + P2 for the pillars shown. Not municipal revenue, and not a financial return: it adds a welfare measure to a spending measure.</p>
+        <div id="cb-m"></div>
       </div>
 
     </div>
   </div>
 
   <div class="meth">
-    <p class="mtitle">Methodology notes</p>
-    <div class="meth-grid">
+    <p class="mtitle">Where the numbers come from</p>
+    <div class="srcs">
       <div class="mitem">
         <div class="mbadge b">P1</div>
         <div>
-          <p class="mname">Anchored to one study; scaling is assumed</p>
-          <p class="mtext">P1 = construction cost &times; annual surplus rate. Kemp (2025) is a travel-cost model of one 88,000 sq ft destination skatepark.
-          Its surplus is driven by visits and travel distance, not by what the park cost, so tying the rate to construction cost is this tool&rsquo;s own
-          device. The 3.0&ndash;7.2% rates are set below the 7.9% baseline for smaller and more local facilities; how much below is a judgment call.
-          Neighborhood facilities serve mostly short-distance users, who generate little travel-cost surplus.</p>
+          <p class="mname">P1 data is informed by</p>
+          <p class="mtext">Kemp, T. (2025). <a href="https://www.anserpress.org/journal/jea/4/1/90" target="_blank" rel="noopener noreferrer">Shred Central: Estimating the user benefits associated with large public skateparks.</a>
+          <em>Journal of Economic Analysis</em>, 4(1):90. doi:<a href="https://doi.org/10.58567/jea04010004" target="_blank" rel="noopener noreferrer">10.58567/jea04010004</a>.
+          The study valued one very large skatepark. We scale its result down for smaller facilities; no study has measured a pump track.</p>
         </div>
       </div>
       <div class="mitem">
         <div class="mbadge a">P2</div>
         <div>
-          <p class="mname">Proxy data; fraction and spend are assumed</p>
-          <p class="mtext">P2 = average daily users &times; out-of-town share &times; operating days &times; spend per visitor-day &times; multiplier.
-          Operating days adjust for climate: 340+ in mild climates, about 300 in temperate, 260&ndash;299 in northern, 180&ndash;259 in cold ones.
-          <strong>Spend by type is judgment, not a derived income adjustment.</strong> MTB households skew above $75K and skateboarding households sit nearer the national
-          median (NSGA survey data), which is the reason for setting skatepark spend lower, but pump tracks serve many children and families, so adult
-          MTB income is a weak basis for the higher pump-track values. Facility scale moves the spend values more than type does.
-          The spend shown is direct spending before the multiplier; the result line also shows it after.</p>
-        </div>
-      </div>
-      <div class="mitem">
-        <div class="mbadge n">&ne;</div>
-        <div>
-          <p class="mname">Not modeled</p>
-          <p class="mtext">Maintenance and operating cost, discounting, ramp-up, inflation, displacement of local spending, youth users (Kemp counts adults only),
-          and health, safety and crime effects. Dollar year is not stated by Kemp, and the cost benchmarks are undated planning values.</p>
-        </div>
-      </div>
-      <div class="mitem">
-        <div class="mbadge n">T</div>
-        <div>
-          <p class="mname">Tags used on assumptions</p>
-          <p class="mtext"><strong>J &middot; Judgment:</strong> chosen by the author, no source. <strong>P &middot; Proxy:</strong> scaled from a study of a different activity.
-          <strong>C &middot; Cited:</strong> a published figure, from a different context. The full source list and verification status are in the project README on GitHub.</p>
+          <p class="mname">P2 data is informed by</p>
+          <p class="mtext">Mountain bike trail visitor spending, study by study, in PMR&rsquo;s <a href="https://www.postmillenniumrenaissance.com/studies/" target="_top">Trail Visitor Spending Ledger</a>.
+          Its per-day out-of-town figures run from about $90 to $200. No study has measured pump-track or skatepark visitors, so spend is scaled down by judgment, and the out-of-town share is an assumption.
+          The 1.72&times; multiplier is attributed to the Outdoor Industry Association (2022); we could not verify it.</p>
         </div>
       </div>
     </div>
+    <p class="mtext"><strong>Not included:</strong> maintenance and operating cost, discounting, growth, local spending moved from elsewhere, and youth users (Kemp counts adults only). The two results are shown separately because one measures what users gain and the other what visitors spend.</p>
+
+    <details class="more">
+      <summary>How each number is calculated</summary>
+      <div class="more-body">
+        <p class="mtext"><strong>P1</strong> = construction cost &times; surplus rate. Kemp&rsquo;s result is driven by how often and how far people travel, not by what the park cost, so tying it to cost is this tool&rsquo;s own device. Operating days and daily users do not affect P1.</p>
+        <p class="mtext"><strong>P2</strong> = average daily users &times; out-of-town share &times; operating days &times; spend per visitor-day &times; multiplier. Pump tracks serve many children and families, so adult MTB spending is a weak guide to their values; facility scale moves spend more than type does.</p>
+        <p class="mtext"><strong>Tags:</strong> J &middot; Judgment: chosen by the author, no source. P &middot; Proxy: scaled from a study of a different activity. C &middot; Cited: attributed to a published figure; check the note beside it. Full sources and what has been verified are in the project README on GitHub.</p>
+      </div>
+    </details>
 
     <p class="disclaimer"><strong>Planning-level estimate for public advocacy.</strong> This is not investment advice, a certified economic analysis, an engineering assessment, or a forecast of municipal revenue. Present results alongside the original studies and say which assumptions were changed.</p>
 
@@ -483,8 +464,8 @@
 </div>
 
 <div class="sticky" id="sticky" aria-hidden="true">
-  <span>Combined value/yr<b id="sv">—</b></span>
-  <span>Years to equal cost<b id="sp">—</b></span>
+  <span>P1 user value/yr<b id="sv1">—</b></span>
+  <span>P2 visitor spending/yr<b id="sv2">—</b></span>
 </div>
 
 <script>
@@ -499,12 +480,17 @@ const SHARE_BASE = 'https://www.postmillenniumrenaissance.com/pump-track/';
 /* Only these origins may drive the tool by postMessage. */
 const PMR_ORIGINS = ['https://www.postmillenniumrenaissance.com', 'https://postmillenniumrenaissance.com'];
 
-const MULT_DEFAULT = 1.72;            // OIA (2022), national outdoor recreation output multiplier
+const MULT_DEFAULT = 1.72;            // attributed to OIA (2022); could not be verified
 const KEMP_SURPLUS = 488000;          // $/yr, Kemp (2025), adults only
 const KEMP_COST = 6200000;            // $, this tool's ratio denominator: press reports, NOT in Kemp
 const KEMP_RATE = KEMP_SURPLUS / KEMP_COST;   // 7.87%; a rate above this has no support in the source
-const PROXY_LOW = 94;                 // $/visitor-day, lowest Whistler bike-park benchmark
-const PROXY_HIGH = 133;               // $/visitor-day, highest
+/* MTB benchmark for the spend checks: the lowest and highest per-DAY out-of-town
+   figures in PMR's Trail Visitor Spending Ledger (Helena $90, CAMBA $200). It
+   replaces an earlier "$94–$133, Whistler" range whose source could not be traced.
+   Per-day only: the ledger's per-trip, per-visit and per-night rows are not
+   comparable. Re-check these two numbers if the ledger changes. */
+const PROXY_LOW = 90;                 // $/visitor-day
+const PROXY_HIGH = 200;               // $/visitor-day
 
 /* Operating days -> label. First entry whose min is <= days wins, so keep it
    sorted high to low and end on min:0. */
@@ -512,8 +498,15 @@ const CLIMATES = [
   { min: 340, label: 'Mild climate (e.g., GA, TX, CA, FL)' },
   { min: 300, label: 'Temperate (e.g., CO, PA, OR, NC)' },
   { min: 260, label: 'Northern (e.g., MN, WI, NY, WA)' },
-  { min: 0,   label: 'Cold / harsh winters (e.g., ND, MT, AK)' }
+  { min: 0,   label: 'Cold / harsh winters (e.g., ND, MT, AK, Canada)' }
 ];
+
+/* The three result blocks. pb = label of the payback metric in each. */
+const PILLARS = {
+  p1: { pb: 'Years of annual user value to equal cost' },
+  p2: { pb: 'Years of annual visitor spending to equal cost' },
+  cb: { pb: 'Years of combined annual value to equal cost' }
+};
 
 const TYPE_LABELS  = { pump_track: 'Pump track', skatepark: 'Skatepark', wheel_park: 'Combined' };
 const SCALE_LABELS = { neighborhood: 'Neighborhood', regional: 'Regional', destination: 'Destination' };
@@ -571,8 +564,8 @@ const FIELDS = [
 const ASSUMPTIONS = [
   { key: 'sR',   label: 'Surplus rate (P1)',            unit: '% of cost / yr',     step: 0.1,  basis: 'J · Judgment', note: 'Scaled down from the 7.9% Kemp-based ratio by the author.' },
   { key: 'vP',   label: 'Out-of-town share (P2)',       unit: '% of daily users',   step: 0.1,  basis: 'J · Judgment', note: 'No source. Share of users assumed to travel in because of the facility.' },
-  { key: 'vS',   label: 'Direct spend per visitor-day', unit: '$ before multiplier', step: 1,    basis: 'P · Proxy',    note: 'Scaled down from $94–$133 MTB bike-park spending.' },
-  { key: 'mult', label: 'Economic multiplier (P2)',     unit: '× direct spend',     step: 0.01, basis: 'C · Cited',    note: 'OIA (2022), national outdoor recreation. May overstate a small local facility.' }
+  { key: 'vS',   label: 'Direct spend per visitor-day', unit: '$ before multiplier', step: 1,    basis: 'P · Proxy',    note: 'Scaled down by judgment from MTB trail spending ($90–$200/day in the Ledger).' },
+  { key: 'mult', label: 'Economic multiplier (P2)',     unit: '× direct spend',     step: 0.01, basis: 'C · Cited, unverified', note: 'Attributed to OIA (2022); we could not locate it. Counts suppliers\' sales too, so it may overstate a small local facility.' }
 ];
 
 /* Order of the fields after the type/scale/days/pillars in a shared link.
@@ -592,7 +585,7 @@ const COPY_DONE_MS = 2200;      // how long "Copied!" stays on the button
 const DAYS_DEFAULT = 300;       // operating days when nothing else is said
 
 /* ---------- state ---------- */
-let cT = 'pump_track', cS = 'neighborhood', p1on = true, p2on = true;
+let cT = 'pump_track', cS = 'neighborhood', p1on = true, p2on = true, showCombo = false;
 const ov = {};                  // key -> number the viewer typed, or null = follow preset
 HASH_KEYS.forEach(k => { ov[k] = null; });
 
@@ -625,8 +618,19 @@ function buildButtons(){
       '<div class="arowin"><input type="number" id="a-' + a.key + '" inputmode="decimal" min="0" step="' + a.step + '" oninput="onField(\'' + a.key + '\')">' +
       '<span class="aunit">' + a.unit + '</span></div>' +
       '<p class="hint">' + a.note + '</p><p class="hint ed" id="pn-' + a.key + '"></p></div>').join('');
-  $('bticks').innerHTML = '';
-  for(let y = 0; y <= HORIZON_YEARS; y += TICK_YEARS) $('bticks').innerHTML += '<span>' + y + (y === HORIZON_YEARS ? ' yrs' : '') + '</span>';
+  let ticks = '';
+  for(let y = 0; y <= HORIZON_YEARS; y += TICK_YEARS) ticks += '<span>' + y + (y === HORIZON_YEARS ? ' yrs' : '') + '</span>';
+  Object.keys(PILLARS).forEach(id => {
+    $(id + '-m').innerHTML =
+      '<div class="metrics">' +
+        '<div class="metric"><p class="mlabel">' + PILLARS[id].pb + '</p><p class="mval" id="' + id + '-pb">—</p></div>' +
+        '<div class="metric"><p class="mlabel">Annual value &divide; cost</p><p class="mval" id="' + id + '-ret">—</p></div>' +
+        '<div class="metric"><p class="mlabel">' + HORIZON_YEARS + '-year value &divide; cost (undiscounted)</p><p class="mval" id="' + id + '-mult">—</p></div>' +
+      '</div>' +
+      '<div class="barrow"><span>Where cost is covered, ' + HORIZON_YEARS + '-year timeline</span><span id="' + id + '-bpct">—</span></div>' +
+      '<div class="barbg" id="' + id + '-bbar" role="img" aria-label="Payback point on a ' + HORIZON_YEARS + '-year timeline"><div class="barfill" id="' + id + '-bfill"></div></div>' +
+      '<div class="bticks">' + ticks + '</div>';
+  });
 }
 
 function syncSlider(){
@@ -651,6 +655,7 @@ function writeInputs(){
 function syncButtons(){
   document.querySelectorAll('[data-t]').forEach(b => b.classList.toggle('sel', b.dataset.t === cT));
   document.querySelectorAll('[data-s]').forEach(b => b.classList.toggle('sel', b.dataset.s === cS));
+  $('showcombo').checked = showCombo;
   [['p1', p1on], ['p2', p2on]].forEach(([id, on]) => {
     $(id + 't').classList.toggle('on', on);
     $(id + 't').setAttribute('aria-checked', on);
@@ -658,12 +663,13 @@ function syncButtons(){
   });
 }
 function syncAll(){ syncButtons(); writeInputs(); syncSlider(); recalc(); }
+function onCombo(){ showCombo = $('showcombo').checked; recalc(); }
 
 // Switching type or scale keeps anything the viewer typed: their project cost and
 // edited assumptions are theirs; only untouched fields follow the new preset.
 function setType(t){ cT = t; syncAll(); }
 function setScale(s){ cS = s; syncAll(); }
-function resetAll(){ HASH_KEYS.forEach(k => { ov[k] = null; }); p1on = p2on = true; $('opdays').value = DAYS_DEFAULT; syncAll(); }
+function resetAll(){ HASH_KEYS.forEach(k => { ov[k] = null; }); p1on = p2on = true; showCombo = false; $('opdays').value = DAYS_DEFAULT; syncAll(); }
 function togP(id){
   if(id === 'p1') p1on = !p1on; else p2on = !p2on;
   syncButtons(); recalc();
@@ -678,6 +684,25 @@ function onField(k){
 }
 
 /* ---------- the model ---------- */
+// Fills one result block's three metrics and its payback timeline. id is a PILLARS key.
+function fillMetrics(id, value, cost){
+  const set = (k, t) => { $(id + '-' + k).textContent = t; };
+  const bar = $(id + '-bfill');
+  if(value > 0 && cost > 0){
+    const pb = cost / value, over = pb > HORIZON_YEARS;
+    set('pb', yrs(pb));
+    set('ret', Math.round(value / cost * 100) + '%/yr');
+    set('mult', (value * HORIZON_YEARS / cost).toFixed(1) + '\u00d7');
+    bar.style.width = Math.min(100, pb / HORIZON_YEARS * 100) + '%';
+    bar.classList.toggle('over', over);
+    set('bpct', over ? 'Not within ' + HORIZON_YEARS + ' yrs (year ' + pb.toFixed(1) + ')' : 'Year ' + pb.toFixed(1));
+    $(id + '-bbar').setAttribute('aria-label', over ? 'Cost is not covered within the ' + HORIZON_YEARS + '-year timeline' : 'Cost is covered in year ' + pb.toFixed(1) + ' of ' + HORIZON_YEARS);
+  } else {
+    ['pb', 'ret', 'mult', 'bpct'].forEach(k => set(k, '—'));
+    bar.style.width = '0%';
+    bar.classList.remove('over');
+  }
+}
 function recalc(){
   const cost = val('cost'), usr = val('users'), od = getOD();
   const sR = val('sR') / 100, vP = val('vP') / 100, vS = val('vS'), mult = val('mult');
@@ -687,40 +712,23 @@ function recalc(){
   const p2 = vdays * vS * mult;
 
   $('p1v').textContent = fs(p1);
-  $('p1f').textContent = fc(cost) + ' × ' + (sR * 100).toFixed(1) + '% surplus rate = ' + ff(p1) + '/yr';
+  $('p1f').textContent = fc(cost) + ' \u00d7 ' + (sR * 100).toFixed(1) + '% surplus rate = ' + ff(p1) + '/yr';
   $('p2v').textContent = fs(p2);
-  $('p2f').textContent = (vP * 100).toFixed(1) + '% of ' + usr + ' users × ' + od + ' days = ' +
-    Math.round(vdays).toLocaleString() + ' visitor-days/yr (about ' + (usr * vP).toFixed(1) + ' per day) × $' + vS +
-    '/day direct × ' + mult + '× multiplier ($' + Math.round(vS * mult) + '/day after it) = ' + ff(p2) + '/yr';
+  $('p2d').textContent = fs(vdays * vS);
+  $('p2f').textContent = (vP * 100).toFixed(1) + '% of ' + usr + ' users \u00d7 ' + od + ' days = ' +
+    Math.round(vdays).toLocaleString() + ' visitor-days/yr (about ' + (usr * vP).toFixed(1) + ' per day) \u00d7 $' + vS +
+    '/day direct \u00d7 ' + mult + '\u00d7 multiplier ($' + Math.round(vS * mult) + '/day after it) = ' + ff(p2) + '/yr';
 
+  fillMetrics('p1', p1, cost);
+  fillMetrics('p2', p2, cost);
+  $('sv1').textContent = fs(p1);
+  $('sv2').textContent = fs(p2);
+
+  // Optional combined view: only the pillars switched on are added.
   const total = (p1on ? p1 : 0) + (p2on ? p2 : 0);
+  $('combo-card').hidden = !showCombo;
   $('stot').textContent = total > 0 ? ff(total) : '—';
-  $('sv').textContent = total > 0 ? fs(total) : '—';
-
-  if(total > 0 && cost > 0){
-    const pb = cost / total;
-    $('spb').textContent = yrs(pb);
-    $('sp').textContent = yrs(pb);
-    $('sret').textContent = Math.round(total / cost * 100) + '%/yr';
-    $('smult').textContent = (total * HORIZON_YEARS / cost).toFixed(1) + '×';
-    const over = pb > HORIZON_YEARS;
-    $('bfill').style.width = Math.min(100, pb / HORIZON_YEARS * 100) + '%';
-    $('bfill').classList.toggle('over', over);
-    $('bpct').textContent = over ? 'Not covered within ' + HORIZON_YEARS + ' yrs (year ' + pb.toFixed(1) + ')' : 'Covered in year ' + pb.toFixed(1);
-    $('bbar').setAttribute('aria-label', over ? 'Cost is not covered within the ' + HORIZON_YEARS + '-year timeline' : 'Cost is covered in year ' + pb.toFixed(1) + ' of ' + HORIZON_YEARS);
-  } else {
-    ['spb', 'sp', 'sret', 'smult'].forEach(i => { $(i).textContent = '—'; });
-    $('sv').textContent = '—';
-    $('bfill').style.width = '0%';
-    $('bfill').classList.remove('over');
-    $('bpct').textContent = '—';
-  }
-  $('mult-label').textContent = HORIZON_YEARS + '-year value ÷ cost (undiscounted)';
-
-  // How much rests on each pillar, regardless of the toggles.
-  const both = p1 + p2;
-  $('mx1').textContent = p1 > 0 && cost > 0 ? yrs(cost / p1) + ' · ' + Math.round(p1 / both * 100) + '% of combined' : '—';
-  $('mx2').textContent = p2 > 0 && cost > 0 ? yrs(cost / p2) + ' · ' + Math.round(p2 / both * 100) + '% of combined' : '—';
+  fillMetrics('cb', total, cost);
 
   syncEdited(sR, vS);
   syncHash();
@@ -740,19 +748,20 @@ function syncEdited(sR, vS){
 
   const flags = [];
   if(sR > KEMP_RATE + 1e-9) flags.push(['Check', 'The surplus rate is above the ' + (KEMP_RATE * 100).toFixed(1) + '% baseline derived from Kemp (2025). The source does not support a higher rate.']);
-  if(vS >= PROXY_LOW) flags.push(['Check', 'Direct spend of $' + vS + '/day is at or above the lowest MTB benchmark ($' + PROXY_LOW + '). That is not a discount for a wheeled-sport facility.']);
-  else if(vS >= PROXY_LOW * INFO_FRACTION) flags.push(['Note', 'Direct spend of $' + vS + '/day is ' + Math.round(vS / PROXY_LOW * 100) + '% of the lowest MTB benchmark ($' + PROXY_LOW + '–$' + PROXY_HIGH + '). Expect questions about it.']);
+  if(vS >= PROXY_LOW) flags.push(['Check', 'Direct spend of $' + vS + '/day is at or above the lowest per-day MTB figure in the Ledger ($' + PROXY_LOW + '). That is not a discount for a wheeled-sport facility.']);
+  else if(vS >= PROXY_LOW * INFO_FRACTION) flags.push(['Note', 'Direct spend of $' + vS + '/day is ' + Math.round(vS / PROXY_LOW * 100) + '% of the lowest per-day MTB figure in the Ledger ($' + PROXY_LOW + '–$' + PROXY_HIGH + '). Expect questions about it.']);
   $('flags').innerHTML = flags.map(f => '<li><b>' + f[0] + ':</b> ' + f[1] + '</li>').join('');
 }
 
 /* ---------- shareable state (URL hash) ----------
-   #type-scale-days-pillars-cost-users-sR-vP-vS-mult
-   pillars is "11", "10", "01" or "00" (P1, P2). A "p" means follow the preset.
+   #type-scale-days-pillars-cost-users-sR-vP-vS-mult-combined
+   pillars is "11", "10", "01" or "00" (P1, P2 shown). A "p" means follow the preset.
+   combined is "1" when the optional combined total is shown (11th part; absent = off).
    Links made before pillars/assumptions existed (#type-scale-cost-users-days)
    are read by their own parser branch below. */
 function hashString(){
   const toks = HASH_KEYS.map(k => ov[k] === null ? 'p' : String(ov[k]));
-  return [cT, cS, getOD(), (p1on ? 1 : 0) + '' + (p2on ? 1 : 0)].concat(toks).join('-');
+  return [cT, cS, getOD(), (p1on ? 1 : 0) + '' + (p2on ? 1 : 0)].concat(toks, [showCombo ? 1 : 0]).join('-');
 }
 function syncHash(){ try{ history.replaceState(null, '', '#' + hashString()); }catch(e){} }
 
@@ -765,10 +774,10 @@ function parseHash(){
     if(!D[t] || !D[t][s]) return false;
     cT = t; cS = s;
     HASH_KEYS.forEach(k => { ov[k] = null; });
-    p1on = p2on = true;
+    p1on = p2on = true; showCombo = false;
     let od, rest;
     if(parts.length >= 10 && /^[01]{2}$/.test(parts[3])){          // current format
-      od = parts[2]; p1on = parts[3][0] === '1'; p2on = parts[3][1] === '1'; rest = parts.slice(4);
+      od = parts[2]; p1on = parts[3][0] === '1'; p2on = parts[3][1] === '1'; rest = parts.slice(4, 10); showCombo = parts[10] === '1';
     } else {                                                        // legacy: cost-users-days
       od = parts[4]; rest = [parts[2], parts[3]];
     }
@@ -812,12 +821,12 @@ function doLink(){
   }).catch(() => { try{ prompt('Copy this link:', url); }catch(e){} });
 }
 
-let assumeWasOpen = true;
+let assumeWasOpen = false;
 function printPrepare(){
   assumeWasOpen = $('assume').open;
   $('assume').open = true;                    // a closed <details> prints as nothing
   $('printmeta').textContent = 'Scenario: ' + TYPE_LABELS[cT] + ', ' + SCALE_LABELS[cS].toLowerCase() + ' scale, ' + getOD() +
-    ' operating days/yr. Pillars included: ' + [p1on ? 'P1' : '', p2on ? 'P2' : ''].filter(Boolean).join(' + ') + '. Generated ' +
+    ' operating days/yr. Pillars shown: ' + [p1on ? 'P1' : '', p2on ? 'P2' : ''].filter(Boolean).join(' + ') + (showCombo ? ' (combined total shown)' : '') + '. Generated ' +
     new Date().toLocaleDateString() + ' from ' + SHARE_BASE + '. Planning-level estimate, not investment advice or a certified economic analysis.';
 }
 function printRestore(){ $('assume').open = assumeWasOpen; }
