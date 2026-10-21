@@ -1,10 +1,7 @@
-https://www.spaskateparks.com/resources/skatepark-user-economic-benefits/
-https://www.wpr.org/news/wisconsin-skateboarding-economist-researches-value-skate-parks
-https://www.npr.org/sections/planet-money/2025/01/14/g-s1-42171/this-skateboarding-economist-suggests-we-need-more-skateparks-and-less-capitalism
+# Skatepark and Pump Track ROI Calculator — Methodology & Configuration Reference
 
-# Wheel Park ROI Calculator — Methodology & Configuration Reference
-
-**Version:** Current  
+**Version:** Current (reviewed 2026-10-21; see *Verification status* below)  
+**Live:** https://www.postmillenniumrenaissance.com/pump-track/  
 **Purpose:** Municipal investment advocacy for public skateparks, pump tracks, and combined wheel parks  
 **Audience:** City councils, parks and recreation departments, municipal planners, community advocates
 
@@ -12,11 +9,13 @@ https://www.npr.org/sections/planet-money/2025/01/14/g-s1-42171/this-skateboardi
 
 ## Overview
 
-The Wheel Park ROI Calculator estimates the annual economic return of a publicly funded wheeled sport facility. It produces two distinct economic value estimates — one anchored to peer-reviewed academic research, one derived from proxy data with documented limitations — that together form a defensible floor-level investment case.
+The Skatepark and Pump Track ROI Calculator estimates the annual economic value of a publicly funded wheeled sport facility. It produces two distinct economic value estimates — one anchored to peer-reviewed academic research, one derived from proxy data with documented limitations — that together give a planning-level estimate of community value. P1 has one anchor and an assumed scaling; P2 rests on a proxy and unsourced inputs. Neither is a floor.
 
 **What the output represents:** Both pillars estimate *community economic value*, not municipal tax receipts, not direct facility revenue, and not return on investment in a commercial sense. The "value recovery" metric shows how long it takes for cumulative community economic benefit to equal the facility's construction cost. These figures are appropriate for public-good infrastructure framing before a council — they are not cash flow projections.
 
-**Conservative positioning:** All estimates are intentionally calibrated toward the lower end of what the supporting literature could justify. Advocates should present these as conservative floor estimates, not ceiling claims.
+**Positioning:** Inputs were set below the published anchors, but the scaling and visitor inputs are judgment, so the tool does not claim a floor. The on-page checks flag any assumption set above its anchor, and note when direct spend is a large share of the lowest MTB benchmark. Present results with the assumptions shown, and say which were edited.
+
+**P1 and P2 are different kinds of value.** P1 is consumer surplus (welfare). P2 is visitor spending (transactions). The combined figure is shown for scale, not as a financial return, and the tool shows each pillar's payback alone and its share of the total. Value is gross, undiscounted and before maintenance and operating cost.
 
 ---
 
@@ -42,12 +41,14 @@ P1 is anchored to the only peer-reviewed Travel Cost Model (TCM) study of a publ
 
 **Kemp (2025) baseline — Lauridsen Skatepark, Des Moines, Iowa:**
 - Facility size: 88,000 sq ft (largest public skatepark in the United States at time of study)
-- Estimated construction cost: approximately $6.2 million
+- Estimated construction cost: approximately $6.2 million. **Not from Kemp**: the abstract reports no cost. Press coverage gives a $6.1M expected budget and a $6.3M funding goal (2019); no final audited cost was found. The 7.9% is therefore this tool's ratio of a study figure to a news figure.
 - Annual consumer surplus (adults): $488,000
-- Per-adult-user-day benefit: $61
+- Per-adult-user-day benefit: $61 (implies roughly 8,000 adult user-days per year)
 - Implied annual surplus rate: $488,000 ÷ $6,200,000 = **7.9% per year**
+- Dollar year and sample size: not stated in the abstract
+- Adults only: youth users are not counted
 
-The Travel Cost Model establishes user benefit by analyzing the relationship between a visitor's travel distance and frequency of visits. Users who travel further incur higher costs but still choose to visit, revealing their willingness to pay. The $61 figure is a TCM-derived consumer surplus — not an admission fee, but a revealed-preference measure of value received per adult user-day.
+Kemp's surplus is driven by visits and travel distance, not by what the facility cost. Tying a rate to construction cost is this tool's own device, and the README and the page say so. The Travel Cost Model establishes user benefit by analyzing the relationship between a visitor's travel distance and frequency of visits. Users who travel further incur higher costs but still choose to visit, revealing their willingness to pay. The $61 figure is a TCM-derived consumer surplus — not an admission fee, but a revealed-preference measure of value received per adult user-day.
 
 ### Scaling logic
 
@@ -56,13 +57,13 @@ The Lauridsen is an exceptional facility: the largest of its kind in the country
 1. Most of their users travel short distances, generating near-zero TCM-measured travel-cost surplus
 2. Less unique or specialized facilities attract fewer willing-to-travel visitors
 
-Annual surplus rates applied in the calculator range from 3.0% to 7.2%, all set at or below the Lauridsen's 7.9% baseline. The destination skatepark rate of 7.2% is set slightly below the Lauridsen to reflect that even large regional destination skateparks are unlikely to match that facility's exceptional national profile.
+Annual surplus rates applied in the calculator range from 3.0% to 7.2%, all set below the Lauridsen's 7.9% baseline. **The rates are the author's judgment: nothing derives why 4.8% and not 5.5%.** The destination skatepark rate of 7.2% is set slightly below the Lauridsen to reflect that even large regional destination skateparks are unlikely to match that facility's exceptional national profile. The calculator flags any edited rate above 7.9%.
 
-**P1 is driven by construction cost, not daily user count.** The "estimated daily users" input field does not affect Pillar 1. Changing that field only affects Pillar 2.
+**P1 is driven by construction cost, not daily user count or operating days.** Those two inputs affect Pillar 2 only, and the page tags them "P2 input".
 
 ### Limitation
 
-The Kemp (2025) Lauridsen study is the *only* peer-reviewed TCM analysis of a public skatepark. Applying its framework to pump tracks and wheel parks requires analogy by facility type — no direct TCM study of pump tracks exists. This should be acknowledged when presenting P1 for non-skatepark configurations.
+The Kemp (2025) Lauridsen study is the *only* peer-reviewed TCM analysis of a public skatepark. Applying its framework to pump tracks and wheel parks requires analogy by facility type — no direct TCM study of pump tracks exists. The page now states this beside P1 (badge: **A · Anchored, rates assumed**). The old "High confidence" badge overstated it: only the single Kemp figure is anchored, and the scaling to nine presets is assumed.
 
 ---
 
@@ -75,7 +76,7 @@ The economic activity generated in the local economy by out-of-town visitors who
 ### Formula
 
 ```
-P2 = Daily Users × Visitor Fraction × Operating Days × Daily Visitor Spend × Economic Multiplier (1.72×)
+P2 = Average Daily Users × Visitor Fraction × Operating Days × Direct Spend per Visitor-Day × Economic Multiplier (1.72×)
 ```
 
 ### Source data
@@ -86,13 +87,13 @@ No peer-reviewed visitor spending study exists for public skateparks or pump tra
 - Northwest Arkansas cycling tourism study: $159.4 million annual economic impact from bicycle tourism; $416 average spending per destination trip (Trust for Public Land, 2025)
 - Economic multiplier: $1.72 per $1 of direct outdoor recreation visitor spending (Outdoor Industry Association, 2022)
 
-These are structurally similar facilities (destination-grade active recreation, purpose-driven travel), but they reflect a higher-income participant population than skateboarding. A downward income adjustment is applied as described below.
+These are a different kind of facility: lift-served bike parks and trail networks, with lodging, where a visit is a trip. A wheeled-sport facility is a different product. The tool scales spend down from the benchmark by judgment, as described below, and the page tags the result **P · Proxy, inputs assumed**.
 
 ### Visitor fraction rationale
 
-Visitor fractions range from 1.5% (small neighborhood pump track) to 4.0% (destination skatepark). These are intentionally conservative. For comparison, major MTB trail networks routinely report 30–60% of users as out-of-town visitors. Wheeled sport facilities are generally not the sole driver of travel in the way that a Whistler or Moab destination is; the fractions here reflect a more realistic subset of daily users making purpose-driven trips from outside the local area.
+Visitor fractions range from 1.5% (small neighborhood pump track) to 4.0% (destination skatepark). These are assumptions with no source; the page tags them **J · Judgment**. For comparison, major MTB trail networks routinely report 30–60% of users as out-of-town visitors. Wheeled sport facilities are generally not the sole driver of travel in the way that a Whistler or Moab destination is; the fractions here reflect a more realistic subset of daily users making purpose-driven trips from outside the local area.
 
-### Income adjustment — why pump tracks and skateparks use different spend values
+### Spend by facility type — judgment, not a derived income adjustment
 
 A documented income differential exists between mountain bike and skateboarding participant populations:
 
@@ -118,13 +119,13 @@ Skateboarding participant household income is near or slightly below the nationa
 >   https://files.eric.ed.gov/fulltext/ED609263.pdf
 
 **Application in the calculator:**
-Because visitor spending scales with disposable income, pump track visitor spend estimates are set *above* the MTB proxy mid-range to reflect the MTB-family demographic that pump tracks primarily attract, while skatepark estimates are reduced below the proxy range to reflect the broader and lower-income skateboarding demographic. Combined wheel park figures split the difference, reflecting their mixed-discipline audience.
+The income argument above is the reason for setting skatepark spend below pump-track spend. It is not a derivation, and it is weak for pump tracks, which serve many children and families, so adult MTB household income is a poor basis for their higher values. In the presets, **scale moves the spend value much more than type does** (neighborhood pump track $22 vs neighborhood skatepark $20). Combined wheel park figures sit between the two.
 
-The MTB proxy range from source studies is $94–$133 per visitor per day. Spend values in the calculator range from $20 (neighborhood skatepark) to $85 (destination pump track), representing substantial discounts from that range at all tiers.
+The MTB proxy range from source studies is $94–$133 per visitor per day (direct spending, before any multiplier). Spend values in the calculator range from $20 (neighborhood skatepark) to $85 (destination pump track). **The earlier text called these "substantial discounts at all tiers". That does not hold at the top:** $85 is 90% of the lowest benchmark, and after the 1.72× multiplier a destination pump track is $146 per visitor-day. The page now shows direct spend as a share of the lowest benchmark and the after-multiplier figure, and the destination presets are open to revision.
 
 ### Operating days
 
-Default is 300 days per year. The slider allows adjustment from 180 to 365 days in 5-day increments to reflect local climate:
+Default is 300 days per year (applies to P2 only). The slider allows adjustment from 180 to 365 days in 5-day increments to reflect local climate:
 
 | Days | Climate context |
 |---|---|
@@ -137,7 +138,7 @@ Default is 300 days per year. The slider allows adjustment from 180 to 365 days 
 
 ## Configuration Parameters — All 9 Presets
 
-The table below lists every parameter for each facility type and scale combination. Users may override the **construction cost** and **daily users** fields for their specific project; all other parameters (sR, vP, vS) are preset per configuration.
+The table below lists every parameter for each facility type and scale combination. Users may override all six numbers: **construction cost**, **average daily users**, and the four assumptions (**sR**, **vP**, **vS** and the **multiplier**). Edited fields are outlined, the summary says which assumptions differ from the presets, and a copied link carries them. Switching type or scale keeps edited values; "Reset to presets" clears them.
 
 | Facility Type | Scale | Default Cost | Default Users/day | Surplus Rate (sR) | Visitor Fraction (vP) | Visitor Spend/day (vS) |
 |---|---|---:|---:|---:|---:|---:|
@@ -153,9 +154,10 @@ The table below lists every parameter for each facility type and scale combinati
 
 **Column definitions:**
 
-- **sR (Surplus Rate):** Annual surplus rate applied to construction cost for P1. Derived from Kemp (2025) Lauridsen baseline of 7.9%/yr, scaled down by facility size and destination-draw characteristics.
-- **vP (Visitor Fraction):** Percentage of daily users estimated to be out-of-town visitors for P2 calculation. Conservative relative to MTB destination benchmarks.
-- **vS (Visitor Spend/day):** Estimated average daily spending by an out-of-town visitor (gas, food, lodging, retail). Adjusted from MTB proxy data for income demographic differences between facility types.
+- **sR (Surplus Rate)** [tag J · Judgment]: Annual surplus rate applied to construction cost for P1. Derived from Kemp (2025) Lauridsen baseline of 7.9%/yr, scaled down by facility size and destination-draw characteristics.
+- **vP (Visitor Fraction)** [tag J · Judgment]: Percentage of daily users estimated to be out-of-town visitors for P2 calculation. Conservative relative to MTB destination benchmarks.
+- **vS (Direct spend/visitor-day)** [tag P · Proxy]: Estimated average daily spending by an out-of-town visitor (gas, food, lodging, retail), before the multiplier. Scaled from MTB proxy data by judgment.
+- **Multiplier** [tag C · Cited]: 1.72×, OIA (2022), national outdoor recreation. May overstate a small local facility.
 
 ### Scale definitions
 
@@ -183,7 +185,7 @@ The following payback estimates assume both pillars are active and operating day
 | Combined wheel park | Regional | ~6.1 years |
 | Combined wheel park | Destination | ~3.4 years |
 
-The faster payback for pump tracks vs. skateparks at equivalent scale is a direct result of the income-adjusted visitor spend values — pump tracks draw more from the higher-spending MTB family demographic.
+The faster payback for pump tracks vs. skateparks at equivalent scale comes from the spend assumptions and the smaller construction cost, not from a measured difference in visitor behavior. These were checked against the code on 2026-10-21 and match. Nine-preset payback ranges from 13.9 to 33.3 years on P1 alone, and spending is 43–86% of the combined value, so the headline depends on the least-sourced pillar.
 
 ---
 
@@ -203,12 +205,46 @@ The faster payback for pump tracks vs. skateparks at equivalent scale is a direc
 
 **Combined:**
 - Total annual value: $30,250 + $59,443 = **$89,693/year**
-- Value recovery: $550,000 ÷ $89,693 = **6.1 years**
-- Annual return on construction cost: 16%
+- Value recovery: $550,000 ÷ $89,693 = **6.1 years** (gross, undiscounted, before maintenance)
+- Annual value ÷ cost: 16%
 
 ---
 
+## What the page shows
+
+- A per-field tag on every assumption (J · Judgment, P · Proxy, C · Cited), and a P1/P2 badge with a letter and a word (never color alone).
+- Checks under the assumptions: a rate above the Kemp-based 7.9%; direct spend at or above, or at half or more of, the lowest MTB benchmark ($94).
+- Each pillar's payback alone and its share of the combined value.
+- Payback on a 20-year timeline, replacing the earlier "value recovery progress" bar, which showed the *remaining* share of 20 years after payback and read as progress.
+- **Copy link** always writes the canonical `https://www.postmillenniumrenaissance.com/pump-track/#…` address and carries the pillar toggles and any edited assumptions. Format: `#type-scale-days-pillars-cost-users-sR-vP-vS-mult`, where `pillars` is `11`, `10`, `01` or `00` and `p` means "follow the preset". Links in the old format (`#type-scale-cost-users-days`) still open.
+- Print includes the assumptions, the pillars included, the date, and a planning-estimate notice.
+
+## Verification status (2026-10-21)
+
+| Item | Status |
+|---|---|
+| Kemp (2025): ~$488K/yr, $61/adult user-day | Read on the publisher's abstract page |
+| Kemp: $6.2M cost | **Not in the abstract.** Press: $6.1M expected / $6.3M funding goal (2019); links from search results, not opened |
+| Kemp: size, sample, dollar year | Not stated in the abstract |
+| Whistler $94–$133 per visitor-day | Not verified; cited via NW Arkansas studies |
+| NW Arkansas, TPL 2025, $416 per trip | Not verified |
+| OIA (2022) 1.72× multiplier | Not verified |
+| NSGA and Tony Hawk Foundation income data | Not verified |
+| Wishaw pump track 55% crime reduction | Not used by the tool; primary report not verified |
+
 ## Complete Source List
+
+**Press coverage of Kemp (2025):**
+
+https://www.spaskateparks.com/resources/skatepark-user-economic-benefits/
+https://www.wpr.org/news/wisconsin-skateboarding-economist-researches-value-skate-parks
+https://www.npr.org/sections/planet-money/2025/01/14/g-s1-42171/this-skateboarding-economist-suggests-we-need-more-skateparks-and-less-capitalism
+
+**Lauridsen Skatepark cost, press reports (2019):**
+
+https://www.businessrecord.com/skatepark-lands-500k-state-grant-closes-in-on-doubled-6-1-million-budget
+https://www.crestonnews.com/2019/10/14/des-moines-skatepark-reaches-6-3m-funding-goal/arlnixf
+
 
 **Primary study — P1 anchor:**
 
@@ -242,7 +278,7 @@ and $54.1 million in annual labor income across 13 locations.
 Whistler Bikepark visitor studies. Cited range: $94–$133 per visitor per day.
 (Referenced via Northwest Arkansas cycling tourism economic studies.)
 
-**Cycling infrastructure health & social ROI:**
+**Cycling infrastructure health & social ROI** (background reading; not used by the calculator):
 
 Macmillan, A., Connor, J., Witten, K., Kearns, R., Rees, D., & Woodward, A. (2014). The societal costs
 and benefits of commuter bicycling: Simulating the effects of specific policies using system dynamics
@@ -285,17 +321,17 @@ skateparks; 85% reported fewer complaint calls from businesses after skatepark o
 
 North Lanarkshire Council (Scotland). Wishaw Pump Track post-construction assessment.
 Reported 55% reduction in local anti-social behavior and crime rates following facility opening.
-(Circulates in advocacy literature; primary council report not independently verified at time of writing.)
+(Circulates in advocacy literature; primary council report not independently verified at time of writing. Not used by the calculator.)
 
 ---
 
 ## Disclaimer
 
 All estimates are planning-level projections intended to support evidence-based municipal investment cases.
-Results should be presented alongside original source studies. This tool does not constitute a certified
-economic analysis, engineering assessment, or legal or financial recommendation.
+Results should be presented alongside original source studies. This tool does not constitute investment advice, a certified
+economic analysis, engineering assessment, or legal or financial recommendation. The same notice is on the page and in printed output.
 
 The calculator and this methodology document were produced for public advocacy purposes.
 The underlying Kemp (2025) study is the only peer-reviewed economic analysis specific to skateparks;
 all other estimates involve extrapolation, proxy data, or analogy by facility type.
-Confidence levels are indicated within the calculator interface.
+Each pillar's badge and each assumption's tag are shown within the calculator interface.

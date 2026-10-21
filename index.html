@@ -1,15 +1,60 @@
 <!DOCTYPE html>
+<!--
+==================================================================================
+  SKATEPARK AND PUMP TRACK ROI CALCULATOR  —  single-file tool
+  Post Millennium Renaissance  ·  postmillenniumrenaissance.com/pump-track/
+==================================================================================
+
+  FILE MAP  (search the ALL-CAPS section labels below to jump reliably)
+
+  <head> / <style>
+    · THEME .................... one dark palette (--bg … --t3). t2/t3 are tuned to
+                                 clear WCAG AA (4.5:1) on --surface AND --surface2
+    · COMPONENTS ............... config card, assumptions panel, pillar cards,
+                                 summary card, sticky phone bar, methodology
+    · PRINT .................... last in <style>; everything inside @media print
+  <body>
+    · markup is mostly shells. Facility-type / scale buttons and the assumption
+      fields are BUILT FROM the registries in the script (TYPE_LABELS,
+      SCALE_LABELS, ASSUMPTIONS).
+  <script>
+    ==== ONE CONTIGUOUS DATA BLOCK ====
+    · SHARE_BASE / PMR_ORIGINS . canonical address for copied links; message allow-list
+    · MULT_DEFAULT, KEMP_*, PROXY_* the published anchors the checks compare against
+    · CLIMATES ................. operating-days -> climate label
+    · TYPE_LABELS / SCALE_LABELS the two button rows
+    · D ........................ the nine presets (type x scale)
+    · FIELDS / ASSUMPTIONS ..... the six overridable numbers; the four assumptions
+    /* ===== END OF DATA — everything below is logic ===== */
+    · tuning constants, state, helpers, recalc(), hash (share state), init
+
+  TO ADD A FACILITY TYPE:  one entry in TYPE_LABELS + one block in D, one
+                           data-t button appears automatically.
+  TO ADD A SCALE:          one entry in SCALE_LABELS + one line in each D type.
+  TO ADD AN EDITABLE ASSUMPTION: one entry in FIELDS and one in ASSUMPTIONS, then
+                           use val("key") in recalc() and add the key to
+                           HASH_KEYS so a copied link carries it.
+
+  EXTERNAL DEPENDENCY: Google Fonts (Epilogue, JetBrains Mono, Outfit). Without it
+  the tool falls back to system sans/monospace and works identically.
+==================================================================================
+-->
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#0f172a">
   <link rel="icon" href="favicon.ico">
   <link rel="icon" type="image/png" href="favicon-32x32.png">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="canonical" href="https://www.postmillenniumrenaissance.com/pump-track/">
   <title>Skatepark and Pump Track ROI Calculator</title>
+  <meta name="description" content="Planning-level estimate of the annual economic value of a public skatepark, pump track or wheel park: user surplus plus visitor spending, with every assumption shown and editable.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
+    /* ===== THEME ===== */
     :root {
       --bg: #0f172a;
       --surface: #1e293b;
@@ -23,144 +68,188 @@
       --amber: #fbbf24;
       --amber-bg: rgba(251,191,36,0.10);
       --t1: #f8fafc;
-      --t2: #94a3b8;
-      --t3: #64748b;
+      /* t2/t3 were #94a3b8/#64748b. #64748b was 3.07:1 on --surface and 2.6:1 on
+         the input fields (--surface2). Both now clear 4.5:1 on every surface. */
+      --t2: #a8b5c8;
+      --t3: #94a3b8;
       --display: 'Epilogue', sans-serif;
       --mono: 'JetBrains Mono', monospace;
       --body: 'Outfit', sans-serif;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
+    /* Load-bearing: several components set display:flex/grid, which outranks the
+       [hidden] attribute, so without this rule hidden elements stay visible. */
+    [hidden] { display: none !important; }
     body { background: var(--bg); color: var(--t1); font-family: var(--body); font-size: 15px; line-height: 1.6; min-height: 100vh; }
-    .wrap { max-width: 960px; margin: 0 auto; padding: 40px 20px 80px; }
+    .wrap { max-width: 960px; margin: 0 auto; padding: 40px 20px 100px; }
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
-    /* Top nav — back to main site */
+    /* ===== COMPONENTS ===== */
     .topnav { margin-bottom: 24px; }
-    .homebtn { display: inline-flex; align-items: center; padding: 8px 14px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; color: var(--t2); font-family: var(--mono); font-size: 11px; font-weight: 500; letter-spacing: 0.07em; text-transform: uppercase; text-decoration: none; transition: all 0.15s; }
+    .homebtn { display: inline-flex; align-items: center; min-height: 40px; padding: 8px 14px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; color: var(--t2); font-family: var(--mono); font-size: 11px; font-weight: 500; letter-spacing: 0.07em; text-transform: uppercase; text-decoration: none; transition: all 0.15s; }
     .homebtn:hover { border-color: var(--accent); color: var(--accent); }
 
-    /* Header */
     .eyebrow { font-family: var(--mono); font-size: 11px; font-weight: 500; letter-spacing: 0.14em; color: var(--accent); text-transform: uppercase; margin-bottom: 10px; }
     h1 { font-family: var(--display); font-weight: 800; font-size: clamp(26px,5vw,40px); line-height: 1.1; margin-bottom: 12px; }
     h1 span { color: var(--accent); }
-    .intro { font-size: 14px; color: var(--t2); max-width: 560px; line-height: 1.7; margin-bottom: 36px; }
+    .intro { font-size: 14px; color: var(--t2); max-width: 600px; line-height: 1.7; margin-bottom: 36px; }
 
-    /* Layout */
-    .grid { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1.25fr); gap: 18px; align-items: start; }
-    .results-col { display: flex; flex-direction: column; gap: 12px; }
-    @media (max-width: 640px) { .grid { grid-template-columns: 1fr; } .meth-grid { grid-template-columns: 1fr !important; } }
+    .grid { display: grid; grid-template-columns: minmax(0,1fr); gap: 18px; align-items: start; }
+    .results-col { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+    @media (min-width: 641px) { .grid { grid-template-columns: minmax(0,1fr) minmax(0,1.25fr); } .meth-grid { grid-template-columns: 1fr 1fr !important; } }
 
-    /* Config card */
     .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; }
-    .clabel { font-family: var(--mono); font-size: 10px; font-weight: 600; letter-spacing: 0.12em; color: var(--t3); text-transform: uppercase; margin-bottom: 10px; }
+    .clabel { display: block; font-family: var(--mono); font-size: 10px; font-weight: 600; letter-spacing: 0.12em; color: var(--t3); text-transform: uppercase; margin-bottom: 10px; }
     .csec { margin-bottom: 22px; }
     .bgrp { display: flex; gap: 6px; }
-    .bgrp button { flex: 1; padding: 9px 4px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; color: var(--t2); font-family: var(--body); font-size: 12px; font-weight: 500; cursor: pointer; transition: all 0.15s; }
+    .bgrp button { flex: 1; min-height: 40px; padding: 9px 4px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; color: var(--t2); font-family: var(--body); font-size: 12px; font-weight: 500; cursor: pointer; transition: all 0.15s; }
     .bgrp button:hover { border-color: var(--accent); color: var(--t1); }
     .bgrp button.sel { background: var(--accent-bg); border-color: var(--accent); color: var(--accent); }
     .hint { margin-top: 7px; font-size: 11px; color: var(--t3); line-height: 1.5; }
     .hint.it { font-style: italic; margin-top: 3px; }
+    .hint.ed { color: var(--accent); }
+    .ptag { font-family: var(--mono); font-size: 9px; color: var(--amber); background: var(--amber-bg); padding: 1px 5px; border-radius: 3px; vertical-align: 1px; letter-spacing: 0; }
 
-    /* Number inputs */
-    .iwrap { position: relative; }
-    .ipfx { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--t3); font-family: var(--mono); font-size: 14px; pointer-events: none; }
-    input[type="number"] { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; color: var(--t1); font-family: var(--mono); font-size: 14px; padding: 10px 12px; outline: none; transition: border-color 0.15s; -moz-appearance: textfield; }
+    input[type="number"] { width: 100%; min-height: 40px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; color: var(--t1); font-family: var(--mono); font-size: 14px; padding: 10px 12px; outline: none; transition: border-color 0.15s; -moz-appearance: textfield; }
     input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
     input[type="number"]:focus { border-color: var(--accent); }
+    /* A value that differs from this scale's preset is outlined, so an edited
+       number can never be mistaken for the default. */
+    input[type="number"].edited { border-color: var(--accent); background: var(--accent-bg); }
+    .iwrap { position: relative; }
+    .ipfx { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--t3); font-family: var(--mono); font-size: 14px; pointer-events: none; }
     .iwrap input { padding-left: 24px; }
 
-    /* Range slider */
-    input[type="range"] { width: 100%; height: 4px; border-radius: 2px; outline: none; cursor: pointer; -webkit-appearance: none; margin: 8px 0 2px; }
-    input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: var(--accent); cursor: pointer; border: 2px solid var(--surface); transition: transform 0.15s; }
+    input[type="range"] { width: 100%; height: 4px; border-radius: 2px; outline: none; cursor: pointer; -webkit-appearance: none; margin: 14px 0 8px; }
+    input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; border-radius: 50%; background: var(--accent); cursor: pointer; border: 2px solid var(--surface); transition: transform 0.15s; }
     input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.18); }
-    input[type="range"]::-moz-range-thumb { width: 18px; height: 18px; border-radius: 50%; background: var(--accent); border: 2px solid var(--surface); cursor: pointer; }
-    .slider-row { display: flex; justify-content: space-between; align-items: baseline; margin-top: 4px; }
-    .slider-val { font-family: var(--mono); font-size: 12px; color: var(--t1); }
-    .slider-climate { font-size: 11px; color: var(--accent); font-style: italic; }
+    input[type="range"]::-moz-range-thumb { width: 22px; height: 22px; border-radius: 50%; background: var(--accent); border: 2px solid var(--surface); cursor: pointer; }
+    .slider-row { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-top: 4px; }
+    .slider-val { font-family: var(--mono); font-size: 12px; color: var(--t1); white-space: nowrap; }
+    .slider-climate { font-size: 11px; color: var(--accent); font-style: italic; text-align: right; }
 
-    /* Action buttons */
-    .arow { display: flex; gap: 8px; margin-top: 22px; }
-    .abtn { flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 9px 8px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; color: var(--t2); font-family: var(--body); font-size: 12px; font-weight: 500; cursor: pointer; transition: all 0.15s; }
+    /* Assumptions panel */
+    .assume { margin-bottom: 22px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface2); }
+    .assume > summary { cursor: pointer; padding: 11px 14px; min-height: 40px; font-family: var(--mono); font-size: 10px; font-weight: 600; letter-spacing: 0.12em; color: var(--t2); text-transform: uppercase; list-style-position: inside; }
+    .assume-body { padding: 4px 14px 14px; }
+    .assume-lead { font-size: 11px; color: var(--t3); line-height: 1.55; margin-bottom: 14px; }
+    .afield { margin-bottom: 14px; }
+    .alabel { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; font-size: 12px; font-weight: 500; color: var(--t1); margin-bottom: 5px; }
+    .btag { font-family: var(--mono); font-size: 9px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; padding: 1px 6px; border-radius: 3px; border: 1px solid var(--border2); color: var(--t2); white-space: nowrap; }
+    .arowin { display: flex; align-items: center; gap: 8px; }
+    .arowin input { flex: 0 0 110px; width: 110px; }
+    .aunit { font-size: 11px; color: var(--t3); }
+    .flags { list-style: none; margin-top: 4px; }
+    .flags li { font-size: 11px; color: var(--t2); line-height: 1.55; padding: 6px 0 6px 10px; border-left: 2px solid var(--amber); margin-top: 6px; }
+    .flags li b { color: var(--amber); font-family: var(--mono); font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; }
+
+    .arow { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+    .abtn { flex: 1 1 auto; display: flex; align-items: center; justify-content: center; gap: 6px; min-height: 40px; padding: 9px 12px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; color: var(--t2); font-family: var(--body); font-size: 12px; font-weight: 500; cursor: pointer; transition: all 0.15s; }
     .abtn:hover { border-color: var(--accent); color: var(--accent); }
 
-    /* Pillar cards */
     .pcard { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; transition: opacity 0.22s; }
-    .pcard.off { opacity: 0.35; }
-    .pcard.off .pbody { pointer-events: none; }
-    .phdr { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; border-bottom: 1px solid var(--border); gap: 10px; }
+    .pcard.off { opacity: 0.5; }
+    .phdr { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; border-bottom: 1px solid var(--border); gap: 10px; flex-wrap: wrap; }
     .ptitle { font-family: var(--display); font-weight: 700; font-size: 14px; margin-bottom: 2px; }
     .psub { font-size: 11px; color: var(--t3); }
     .pbody { padding: 18px; }
     .pval { font-family: var(--mono); font-size: 30px; font-weight: 600; margin-bottom: 5px; }
-    /* FIX: formula and source notes bumped to --t2 for readability */
     .pform { font-family: var(--mono); font-size: 11px; color: var(--t2); margin-bottom: 14px; line-height: 1.7; word-break: break-word; overflow-wrap: anywhere; }
     .psrc { font-size: 12px; color: var(--t2); padding-top: 12px; border-top: 1px solid var(--border); line-height: 1.65; }
     .psrc strong { color: var(--t1); }
     .psrc .warn { color: var(--amber); }
+    .psrc a, .mtext a { color: var(--accent); }
 
-    /* Confidence badges */
+    /* Confidence badges — a word and a letter always accompany the color */
     .badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 8px; border-radius: 20px; font-family: var(--mono); font-size: 10px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; white-space: nowrap; }
-    .badge.g { background: var(--green-bg); color: var(--green); border: 1px solid rgba(74,222,128,0.2); }
+    .badge.b { background: var(--accent-bg); color: var(--accent); border: 1px solid rgba(96,165,250,0.3); }
     .badge.a { background: var(--amber-bg); color: var(--amber); border: 1px solid rgba(251,191,36,0.2); }
     .bdot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
 
-    /* Toggle — white thumb in both states */
-    .trow { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    /* Toggle — 34x18 to look at, ~50x40 to touch (the ::before is the tap area) */
+    .trow { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
     .tog { width: 34px; height: 18px; border-radius: 9px; background: var(--border2); position: relative; cursor: pointer; transition: background 0.2s; flex-shrink: 0; }
+    .tog::before { content: ''; position: absolute; inset: -11px -8px; }
     .tog::after { content: ''; position: absolute; width: 12px; height: 12px; border-radius: 50%; background: white; top: 3px; left: 3px; transition: all 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.35); }
     .tog.on { background: var(--green); }
     .tog.on::after { left: 19px; }
+    .tog:focus-visible { outline-offset: 4px; }
 
-    /* Summary card — accent top border to stand out as key result */
     .scard { background: var(--surface); border: 1px solid var(--border); border-top: 2px solid var(--accent); border-radius: 12px; padding: 20px; }
     .slabel { font-family: var(--mono); font-size: 10px; font-weight: 600; letter-spacing: 0.12em; color: var(--t3); text-transform: uppercase; margin-bottom: 6px; }
     .stotal { font-family: var(--mono); font-size: 38px; font-weight: 600; color: var(--accent); margin-bottom: 4px; line-height: 1; }
-    .ssub { font-size: 11px; color: var(--t3); margin-bottom: 18px; }
-    .metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+    .ssub { font-size: 11px; color: var(--t3); margin-bottom: 14px; line-height: 1.5; }
+    .custom { font-size: 11px; color: var(--t1); background: var(--accent-bg); border: 1px solid var(--accent); border-radius: 6px; padding: 6px 10px; margin-bottom: 14px; line-height: 1.5; }
+    .metrics { display: grid; grid-template-columns: repeat(auto-fit,minmax(120px,1fr)); gap: 10px; margin-bottom: 16px; }
     .metric { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 12px; }
-    .mlabel { font-size: 11px; color: var(--t3); margin-bottom: 4px; }
+    .mlabel { font-size: 11px; color: var(--t3); margin-bottom: 4px; line-height: 1.4; }
     .mval { font-family: var(--mono); font-size: 20px; font-weight: 600; }
-    .barrow { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 10px; color: var(--t3); margin-bottom: 6px; }
-    .barbg { height: 5px; background: var(--border); border-radius: 3px; overflow: hidden; }
-    /* FIX: bar fill now uses --accent (blue) instead of --green */
-    .barfill { height: 100%; background: var(--accent); border-radius: 3px; transition: width 0.45s ease; width: 0%; }
+    .mix { margin-bottom: 16px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; }
+    .mixrow { display: flex; justify-content: space-between; gap: 10px; font-size: 12px; color: var(--t2); padding: 3px 0; }
+    .mixrow span:last-child { font-family: var(--mono); font-size: 11px; color: var(--t1); text-align: right; }
+    .barrow { display: flex; justify-content: space-between; gap: 10px; font-family: var(--mono); font-size: 10px; color: var(--t3); margin-bottom: 6px; }
+    .barbg { height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; }
+    .barfill { height: 100%; background: var(--accent); border-radius: 4px; transition: width 0.45s ease; width: 0%; }
+    .barfill.over { background: var(--amber); }
+    .bticks { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 9px; color: var(--t3); margin-top: 4px; }
+    .bnote { font-size: 11px; color: var(--t3); margin-top: 10px; line-height: 1.5; }
 
-    /* Methodology */
+    /* Phone-only summary bar: results sit below the inputs on a phone, so the
+       two numbers that matter stay in view while you edit. aria-hidden because
+       the summary card carries the same numbers for assistive tech. */
+    .sticky { display: none; }
+    @media (max-width: 640px) {
+      .wrap { padding-bottom: 110px; }
+      .sticky { display: flex; justify-content: space-between; gap: 12px; position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; padding: 10px 16px; background: var(--surface); border-top: 2px solid var(--accent); font-size: 12px; color: var(--t2); }
+      .sticky b { font-family: var(--mono); font-size: 15px; color: var(--accent); display: block; }
+    }
+
     .meth { margin-top: 18px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; }
     .mtitle { font-family: var(--mono); font-size: 10px; font-weight: 600; letter-spacing: 0.12em; color: var(--t3); text-transform: uppercase; margin-bottom: 18px; }
-    .meth-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+    .meth-grid { display: grid; grid-template-columns: minmax(0,1fr); gap: 22px; }
     .mitem { display: flex; gap: 12px; }
     .mbadge { flex-shrink: 0; width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 11px; font-weight: 600; }
-    .mbadge.g { background: var(--green-bg); color: var(--green); }
+    .mbadge.b { background: var(--accent-bg); color: var(--accent); }
     .mbadge.a { background: var(--amber-bg); color: var(--amber); }
+    .mbadge.n { background: var(--surface2); color: var(--t2); }
     .mname { font-size: 13px; font-weight: 500; margin-bottom: 5px; }
     .mtext { font-size: 12px; color: var(--t2); line-height: 1.65; }
+    .mtext strong { color: var(--t1); }
+    .disclaimer { margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--border); font-size: 12px; color: var(--t2); line-height: 1.65; }
+    .disclaimer strong { color: var(--t1); }
 
-    /* Related-tool cross-link */
     .xlink { margin-top: 26px; padding-top: 22px; border-top: 1px solid var(--border); }
     .xlabel { font-family: var(--mono); font-size: 10px; font-weight: 600; letter-spacing: 0.12em; color: var(--t3); text-transform: uppercase; margin-bottom: 12px; }
-    .xbtn { display: inline-flex; align-items: center; padding: 10px 16px; background: var(--accent-bg); border: 1px solid var(--accent); border-radius: 8px; color: var(--accent); font-family: var(--body); font-size: 13px; font-weight: 600; text-decoration: none; transition: all 0.15s; }
+    .xbtn { display: inline-flex; align-items: center; min-height: 40px; padding: 10px 16px; background: var(--accent-bg); border: 1px solid var(--accent); border-radius: 8px; color: var(--accent); font-family: var(--body); font-size: 13px; font-weight: 600; text-decoration: none; transition: all 0.15s; }
     .xbtn:hover { background: var(--accent); color: var(--bg); }
     .xtext { font-size: 12px; color: var(--t2); line-height: 1.65; margin-top: 12px; max-width: 640px; }
 
-    /* Print */
+    .printonly { display: none; }
+
+    /* ===== PRINT ===== (last in <style>; every rule inside @media print) */
     @media print {
+      * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
       body { background: #fff !important; color: #111; }
-      .arow { display: none !important; }
-      .card, .pcard, .scard, .meth { background: #fff !important; border: 1px solid #ddd !important; }
+      .arow, .sticky, .topnav, .tog, input[type="range"], .tog::before { display: none !important; }
+      .printonly { display: block !important; margin-top: 18px; font-size: 11px; color: #444; line-height: 1.6; }
+      .card, .pcard, .scard, .meth, .assume { background: #fff !important; border: 1px solid #ddd !important; }
       .scard { border-top: 2px solid #1d4ed8 !important; }
-      .metric { background: #f7f7f7 !important; border: 1px solid #ddd !important; }
+      .metric, input[type="number"] { background: #f7f7f7 !important; border: 1px solid #ddd !important; color: #111 !important; }
       .barbg { background: #e5e5e5 !important; }
       .pval, .mval { color: #111 !important; }
       .stotal { color: #1d4ed8 !important; }
       .barfill { background: #1d4ed8 !important; }
+      .barfill.over { background: #b45309 !important; }
       h1 { color: #111 !important; }
-      h1 span { color: #1d4ed8 !important; }
-      .pform, .psrc { color: #444 !important; }
-      .badge.g { background: #dcfce7 !important; color: #166534 !important; }
+      h1 span, .eyebrow { color: #1d4ed8 !important; }
+      .intro, .pform, .psrc, .mtext, .mname, .hint, .assume-lead, .alabel, .aunit, .ssub, .mlabel, .mixrow, .mixrow span:last-child, .bticks, .barrow, .bnote, .disclaimer, .flags li, .psrc strong, .mtext strong, .disclaimer strong { color: #333 !important; }
+      .psrc a, .mtext a { color: #1d4ed8 !important; }
+      .badge.b { background: #dbeafe !important; color: #1e40af !important; }
       .badge.a { background: #fef3c7 !important; color: #92400e !important; }
-      .tog, input[type="range"] { display: none !important; }
-      .slider-climate { color: #1d4ed8 !important; }
-      .topnav { display: none !important; }
+      .btag { color: #333 !important; border-color: #999 !important; }
+      .custom { color: #111 !important; background: #eff6ff !important; border-color: #1d4ed8 !important; }
+      .slider-climate, .hint.ed { color: #1d4ed8 !important; }
+      .slider-val { color: #111 !important; }
       .xbtn { background: #fff !important; color: #1d4ed8 !important; border-color: #1d4ed8 !important; }
       .xtext { color: #444 !important; }
       .xlink { border-top: 1px solid #ddd !important; }
@@ -179,7 +268,7 @@
   <div style="margin-bottom:36px;">
     <p class="eyebrow">Municipal investment tool</p>
     <h1>Skatepark and Pump Track <span>ROI</span> Calculator</h1>
-    <p class="intro">Estimate the economic return of a public skatepark, pump track, or combined wheel park. Built for advocates presenting to city councils, parks departments, and planning committees. Toggle pillars on or off to match the case you're making.</p>
+    <p class="intro">Estimate the annual economic value of a public skatepark, pump track, or combined wheel park. Built for advocates presenting to city councils, parks departments, and planning committees. Every assumption is shown and editable, and each is tagged with how it was obtained. Toggle pillars on or off to see how much of the result rests on each.</p>
   </div>
 
   <div class="grid">
@@ -187,52 +276,57 @@
     <div class="card">
 
       <div class="csec">
-        <p class="clabel">Facility type</p>
-        <div class="bgrp">
-          <button data-t="pump_track" onclick="setType('pump_track')" class="sel">Pump track</button>
-          <button data-t="skatepark"  onclick="setType('skatepark')">Skatepark</button>
-          <button data-t="wheel_park" onclick="setType('wheel_park')">Combined</button>
-        </div>
+        <span class="clabel" id="lbl-type">Facility type</span>
+        <div class="bgrp" id="type-btns" role="group" aria-labelledby="lbl-type"></div>
       </div>
 
       <div class="csec">
-        <p class="clabel">Facility scale</p>
-        <div class="bgrp">
-          <button data-s="neighborhood" onclick="setScale('neighborhood')" class="sel">Neighborhood</button>
-          <button data-s="regional"     onclick="setScale('regional')">Regional</button>
-          <button data-s="destination"  onclick="setScale('destination')">Destination</button>
-        </div>
+        <span class="clabel" id="lbl-scale">Facility scale</span>
+        <div class="bgrp" id="scale-btns" role="group" aria-labelledby="lbl-scale"></div>
         <p class="hint" id="shint"></p>
       </div>
 
       <div class="csec">
-        <p class="clabel">Construction cost</p>
+        <label class="clabel" for="cost">Construction cost</label>
         <div class="iwrap">
           <span class="ipfx">$</span>
-          <input type="number" id="cost" oninput="recalc()" placeholder="0">
+          <input type="number" id="cost" inputmode="decimal" min="0" step="any" placeholder="0" oninput="onField('cost')">
         </div>
         <p class="hint" id="chint"></p>
+        <p class="hint ed" id="pn-cost"></p>
       </div>
 
       <div class="csec">
-        <p class="clabel">Daily users <span style="font-family:var(--mono);font-size:9px;color:var(--amber);background:var(--amber-bg);padding:1px 5px;border-radius:3px;vertical-align:1px;">P2 input</span></p>
-        <input type="number" id="users" oninput="recalc()" placeholder="0">
+        <label class="clabel" for="users">Average daily users <span class="ptag">P2 input</span></label>
+        <input type="number" id="users" inputmode="decimal" min="0" step="any" placeholder="0" oninput="onField('users')">
         <p class="hint" id="uhint"></p>
-        <p class="hint it">Drives visitor spending (P2) only — not used in P1</p>
+        <p class="hint it">Average per operating day, all ages, not the peak. Drives visitor spending (P2) only; P1 ignores it.</p>
+        <p class="hint ed" id="pn-users"></p>
       </div>
 
       <div class="csec">
-        <p class="clabel">Operating days / year</p>
+        <label class="clabel" for="opdays">Operating days / year <span class="ptag">P2 input</span></label>
         <input type="range" id="opdays" min="180" max="365" step="5" value="300" oninput="updateSlider()">
         <div class="slider-row">
           <span class="slider-val" id="opdays-val">300 days/yr</span>
           <span class="slider-climate" id="opdays-climate"></span>
         </div>
+        <p class="hint it">Drives visitor spending (P2) only; P1 ignores it.</p>
       </div>
 
+      <details class="assume" id="assume" open>
+        <summary>Assumptions behind this scenario</summary>
+        <div class="assume-body">
+          <p class="assume-lead">These come from the preset for the facility type and scale you picked. Change one to test it: edited values are outlined, flagged in the results, and carried in a copied link. Each is tagged with how it was obtained.</p>
+          <div id="assume-fields"></div>
+          <ul class="flags" id="flags"></ul>
+        </div>
+      </details>
+
       <div class="arow">
-        <button class="abtn" onclick="doPrint()">&#8659;&nbsp;Download PDF</button>
-        <button class="abtn" id="lbtn" onclick="doLink()">&#128279;&nbsp;Copy link</button>
+        <button class="abtn" type="button" onclick="doPrint()">&#8659;&nbsp;Print / save PDF</button>
+        <button class="abtn" type="button" id="lbtn" onclick="doLink()">&#128279;&nbsp;Copy link</button>
+        <button class="abtn" type="button" onclick="resetAll()">&#8634;&nbsp;Reset to presets</button>
       </div>
 
     </div>
@@ -242,23 +336,26 @@
       <div class="pcard" id="p1c">
         <div class="phdr">
           <div style="min-width:0;">
-            <p class="ptitle">Direct user economic surplus</p>
-            <p class="psub">Consumer willingness-to-pay value</p>
+            <p class="ptitle">P1 &middot; Direct user economic surplus</p>
+            <p class="psub">Consumer willingness-to-pay value (welfare, not dollars spent)</p>
           </div>
           <div class="trow">
-            <span class="badge g"><span class="bdot"></span>High confidence</span>
-            <span class="tog on" id="p1t" role="switch" aria-checked="true" aria-label="Toggle pillar 1" tabindex="0"
-              onclick="togP('p1')" onkeydown="if(event.key==='Enter'||event.key===' ')togP('p1')"></span>
+            <span class="badge b"><span class="bdot"></span>A &middot; Anchored, rates assumed</span>
+            <span class="tog on" id="p1t" role="switch" aria-checked="true" aria-label="Include pillar 1, direct user surplus" tabindex="0"
+              onclick="togP('p1')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();togP('p1')}"></span>
           </div>
         </div>
         <div class="pbody">
           <div class="pval" id="p1v">—</div>
           <div class="pform" id="p1f"></div>
           <div class="psrc">
-            <strong>Source:</strong> Kemp (2025), <em>Journal of Economic Analysis</em> — Travel Cost Model,
-            Lauridsen Skatepark, Des Moines IA. Baseline: $488K/yr from a $6.2M facility (7.9%/yr). Rates
-            here (3–7.2%) are scaled down for smaller or less destination-oriented facilities, reflecting lower
-            travel-cost surplus per user. P1 is driven by construction cost, not user count.
+            <strong>One anchor.</strong> Kemp (2025), <a href="https://www.anserpress.org/journal/jea/4/1/90" target="_blank" rel="noopener noreferrer"><em>Journal of Economic Analysis</em> 4(1), 66&ndash;82</a>:
+            a travel-cost model of Lauridsen Skatepark, Des Moines IA. It reports about $488K per year and $61 per adult user-day.
+            <strong class="warn">What is not from Kemp:</strong> the $6.2M construction cost is not in the study&rsquo;s abstract. Press reports of the 2019 budget give
+            <a href="https://www.businessrecord.com/skatepark-lands-500k-state-grant-closes-in-on-doubled-6-1-million-budget" target="_blank" rel="noopener noreferrer">$6.1M expected</a>
+            and a <a href="https://www.crestonnews.com/2019/10/14/des-moines-skatepark-reaches-6-3m-funding-goal/arlnixf" target="_blank" rel="noopener noreferrer">$6.3M funding goal</a>,
+            so the 7.9%/yr baseline is a ratio of a study figure to a news figure. The 3.0&ndash;7.2% rates here are judgment, not derived, and applying a
+            skatepark study to a pump track is analogy: no pump-track travel-cost study exists. Kemp counts adults only.
           </div>
         </div>
       </div>
@@ -266,23 +363,24 @@
       <div class="pcard" id="p2c">
         <div class="phdr">
           <div style="min-width:0;">
-            <p class="ptitle">Visitor &amp; tourism spending</p>
-            <p class="psub">Out-of-town visitor economic impact</p>
+            <p class="ptitle">P2 &middot; Visitor &amp; tourism spending</p>
+            <p class="psub">Out-of-town visitor spending, with multiplier</p>
           </div>
           <div class="trow">
-            <span class="badge a"><span class="bdot"></span>MTB proxy</span>
-            <span class="tog on" id="p2t" role="switch" aria-checked="true" aria-label="Toggle pillar 2" tabindex="0"
-              onclick="togP('p2')" onkeydown="if(event.key==='Enter'||event.key===' ')togP('p2')"></span>
+            <span class="badge a"><span class="bdot"></span>P &middot; Proxy, inputs assumed</span>
+            <span class="tog on" id="p2t" role="switch" aria-checked="true" aria-label="Include pillar 2, visitor spending" tabindex="0"
+              onclick="togP('p2')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();togP('p2')}"></span>
           </div>
         </div>
         <div class="pbody">
           <div class="pval" id="p2v">—</div>
           <div class="pform" id="p2f"></div>
           <div class="psrc">
-            <strong class="warn">Mountain bike tourism proxy data.</strong> Visitor spending benchmarks from
-            Whistler Bikepark and NW Arkansas studies ($94–$133/day range). No equivalent peer-reviewed dataset
-            exists for pump tracks or skateparks. Visitor fractions (1.5–4%) are intentionally conservative.
-            Multiplier: 1.72&times; (OIA, 2022).
+            <strong class="warn">Mountain bike tourism proxy; the inputs are assumptions.</strong> No visitor-spending study exists for pump tracks or skateparks.
+            The benchmark is bike-park and trail-network spending ($94&ndash;$133 per visitor-day, Whistler, as cited in NW Arkansas studies; not re-checked here).
+            The out-of-town share (1.5&ndash;4%) has no source. The spend values are scaled down from the benchmark by judgment. The 1.72&times; multiplier is a national
+            outdoor-recreation figure (OIA, 2022) and may overstate a small local facility. Spending counts only new money from people assumed to travel because of the
+            facility; local spending displaced from elsewhere is not netted out.
           </div>
         </div>
       </div>
@@ -290,22 +388,34 @@
       <div class="scard">
         <p class="slabel">Combined annual value</p>
         <div class="stotal" id="stot">—</div>
-        <p class="ssub">per year &middot; community economic value, not municipal revenue</p>
+        <p class="ssub">per year &middot; community economic value, not municipal revenue. P1 is welfare and P2 is spending: different kinds of value, shown together for scale, not as one financial return. Gross, undiscounted, before maintenance and operating cost.</p>
+        <p class="custom" id="custom" hidden></p>
         <div class="metrics">
           <div class="metric">
-            <p class="mlabel">Value recovery</p>
+            <p class="mlabel">Years of annual value to equal cost</p>
             <p class="mval" id="spb">—</p>
           </div>
           <div class="metric">
-            <p class="mlabel">Annual return</p>
+            <p class="mlabel">Annual value &divide; cost</p>
             <p class="mval" id="sret">—</p>
           </div>
+          <div class="metric">
+            <p class="mlabel" id="mult-label">20-year value &divide; cost</p>
+            <p class="mval" id="smult">—</p>
+          </div>
+        </div>
+        <div class="mix">
+          <p class="mlabel">If only one pillar holds</p>
+          <div class="mixrow"><span>P1 surplus alone</span><span id="mx1">—</span></div>
+          <div class="mixrow"><span>P2 visitor spending alone</span><span id="mx2">—</span></div>
         </div>
         <div class="barrow">
-          <span>Value recovery progress (20-yr horizon)</span>
+          <span id="btitle">Where cost is covered on a 20-year timeline</span>
           <span id="bpct">—</span>
         </div>
-        <div class="barbg"><div class="barfill" id="bfill"></div></div>
+        <div class="barbg" id="bbar" role="img" aria-label="Payback point on a 20-year timeline"><div class="barfill" id="bfill"></div></div>
+        <div class="bticks" id="bticks"></div>
+        <p class="bnote">Assumes the same annual value every year: no growth, discounting, ramp-up or inflation.</p>
       </div>
 
     </div>
@@ -315,32 +425,46 @@
     <p class="mtitle">Methodology notes</p>
     <div class="meth-grid">
       <div class="mitem">
-        <div class="mbadge g">P1</div>
+        <div class="mbadge b">P1</div>
         <div>
-          <p class="mname">High confidence — peer-reviewed</p>
-          <p class="mtext">P1 = construction cost &times; annual surplus rate. Kemp (2025) Lauridsen
-          baseline: $488K/yr from $6.2M = 7.9%/yr. Rates here (3–7.2%) are scaled down for smaller
-          facilities: neighborhood parks serve mostly local users whose near-zero travel costs generate
-          minimal TCM-measured surplus. Destination facilities approach the Lauridsen ratio. P1 is
-          independent of daily user count.</p>
+          <p class="mname">Anchored to one study; scaling is assumed</p>
+          <p class="mtext">P1 = construction cost &times; annual surplus rate. Kemp (2025) is a travel-cost model of one 88,000 sq ft destination skatepark.
+          Its surplus is driven by visits and travel distance, not by what the park cost, so tying the rate to construction cost is this tool&rsquo;s own
+          device. The 3.0&ndash;7.2% rates are set below the 7.9% baseline for smaller and more local facilities; how much below is a judgment call.
+          Neighborhood facilities serve mostly short-distance users, who generate little travel-cost surplus.</p>
         </div>
       </div>
       <div class="mitem">
         <div class="mbadge a">P2</div>
         <div>
-          <p class="mname">Medium confidence — proxy data</p>
-          <p class="mtext">P2 = daily users &times; visitor fraction (1.5–4%, ascending by scale) &times;
-          operating days &times; proxy daily spend &times; 1.72&times; multiplier (OIA, 2022). Operating
-          days are adjustable to reflect local climate: 340+ days for mild climates (GA, TX, FL),
-          ~300 for temperate (CO, PA, NC), ~265 for northern (MN, WI, NY), ~220 for harsh winters
-          (ND, MT, AK). Spending benchmarks from mountain bike tourism research — no equivalent dataset
-          exists for wheeled sport parks. <strong style="color:var(--t1);">Income adjustment:</strong> MTB
-          participant households skew above $75K median income vs. ~$54K for skateboarding (NSGA survey
-          data); pump track visitor spend estimates are set higher to reflect the MTB-family demographic,
-          while skatepark estimates are reduced accordingly. Wheel park figures split the difference.</p>
+          <p class="mname">Proxy data; fraction and spend are assumed</p>
+          <p class="mtext">P2 = average daily users &times; out-of-town share &times; operating days &times; spend per visitor-day &times; multiplier.
+          Operating days adjust for climate: 340+ in mild climates, about 300 in temperate, 260&ndash;299 in northern, 180&ndash;259 in cold ones.
+          <strong>Spend by type is judgment, not a derived income adjustment.</strong> MTB households skew above $75K and skateboarding households sit nearer the national
+          median (NSGA survey data), which is the reason for setting skatepark spend lower, but pump tracks serve many children and families, so adult
+          MTB income is a weak basis for the higher pump-track values. Facility scale moves the spend values more than type does.
+          The spend shown is direct spending before the multiplier; the result line also shows it after.</p>
+        </div>
+      </div>
+      <div class="mitem">
+        <div class="mbadge n">&ne;</div>
+        <div>
+          <p class="mname">Not modeled</p>
+          <p class="mtext">Maintenance and operating cost, discounting, ramp-up, inflation, displacement of local spending, youth users (Kemp counts adults only),
+          and health, safety and crime effects. Dollar year is not stated by Kemp, and the cost benchmarks are undated planning values.</p>
+        </div>
+      </div>
+      <div class="mitem">
+        <div class="mbadge n">T</div>
+        <div>
+          <p class="mname">Tags used on assumptions</p>
+          <p class="mtext"><strong>J &middot; Judgment:</strong> chosen by the author, no source. <strong>P &middot; Proxy:</strong> scaled from a study of a different activity.
+          <strong>C &middot; Cited:</strong> a published figure, from a different context. The full source list and verification status are in the project README on GitHub.</p>
         </div>
       </div>
     </div>
+
+    <p class="disclaimer"><strong>Planning-level estimate for public advocacy.</strong> This is not investment advice, a certified economic analysis, an engineering assessment, or a forecast of municipal revenue. Present results alongside the original studies and say which assumptions were changed.</p>
 
     <div class="xlink">
       <p class="xlabel">Related tool</p>
@@ -354,9 +478,48 @@
     </div>
   </div>
 
+  <p class="printonly" id="printmeta"></p>
+
 </div>
+
+<div class="sticky" id="sticky" aria-hidden="true">
+  <span>Combined value/yr<b id="sv">—</b></span>
+  <span>Years to equal cost<b id="sp">—</b></span>
+</div>
+
 <script>
-const OIA = 1.72;
+/* ============================================================================
+   DATA — everything between here and "END OF DATA" is content, not logic.
+   ============================================================================ */
+
+/* Copied links always point at the PMR page, never at this tool's github.io
+   address: the copy is made from inside an iframe, where location.href is the
+   origin, and a link to the origin skips the site wrapper. */
+const SHARE_BASE = 'https://www.postmillenniumrenaissance.com/pump-track/';
+/* Only these origins may drive the tool by postMessage. */
+const PMR_ORIGINS = ['https://www.postmillenniumrenaissance.com', 'https://postmillenniumrenaissance.com'];
+
+const MULT_DEFAULT = 1.72;            // OIA (2022), national outdoor recreation output multiplier
+const KEMP_SURPLUS = 488000;          // $/yr, Kemp (2025), adults only
+const KEMP_COST = 6200000;            // $, this tool's ratio denominator: press reports, NOT in Kemp
+const KEMP_RATE = KEMP_SURPLUS / KEMP_COST;   // 7.87%; a rate above this has no support in the source
+const PROXY_LOW = 94;                 // $/visitor-day, lowest Whistler bike-park benchmark
+const PROXY_HIGH = 133;               // $/visitor-day, highest
+
+/* Operating days -> label. First entry whose min is <= days wins, so keep it
+   sorted high to low and end on min:0. */
+const CLIMATES = [
+  { min: 340, label: 'Mild climate (e.g., GA, TX, CA, FL)' },
+  { min: 300, label: 'Temperate (e.g., CO, PA, OR, NC)' },
+  { min: 260, label: 'Northern (e.g., MN, WI, NY, WA)' },
+  { min: 0,   label: 'Cold / harsh winters (e.g., ND, MT, AK)' }
+];
+
+const TYPE_LABELS  = { pump_track: 'Pump track', skatepark: 'Skatepark', wheel_park: 'Combined' };
+const SCALE_LABELS = { neighborhood: 'Neighborhood', regional: 'Regional', destination: 'Destination' };
+
+/* The nine presets.  cost $ · users avg/day · vP out-of-town share (fraction) ·
+   vS direct $/visitor-day · sR surplus rate (fraction/yr) · cH/uH/sH hint text. */
 const D = {
   pump_track: {
     neighborhood:{cost:75000,   users:25,  vP:.015, vS:22, sR:.030,
@@ -384,136 +547,305 @@ const D = {
   }
 };
 
-let cT='pump_track', cS='neighborhood', p1on=true, p2on=true;
+/* ==== FIELDS — the six numbers a viewer can override. =========================
+   key     name used in state, the hash and val()
+   id      the <input> element
+   max     upper clamp for typed values
+   unit    how to format the preset in the "preset:" note
+   preset  how to read this field's preset out of a D entry (display units:
+           percentages are stored as 0–100 here, as fractions in D)
+   ============================================================================ */
+const FIELDS = [
+  { key: 'cost',  id: 'cost',    max: 1e9,  fmt: v => '$' + Math.round(v).toLocaleString(), preset: d => d.cost },
+  { key: 'users', id: 'users',   max: 1e6,  fmt: v => String(v),                           preset: d => d.users },
+  { key: 'sR',    id: 'a-sR',    max: 100,  fmt: v => v + '%',                             preset: d => +(d.sR * 100).toFixed(2) },
+  { key: 'vP',    id: 'a-vP',    max: 100,  fmt: v => v + '%',                             preset: d => +(d.vP * 100).toFixed(2) },
+  { key: 'vS',    id: 'a-vS',    max: 5000, fmt: v => '$' + v,                             preset: d => d.vS },
+  { key: 'mult',  id: 'a-mult',  max: 10,   fmt: v => v + '×',                             preset: () => MULT_DEFAULT }
+];
 
-function fs(n){ if(!n||n<=0)return '—'; if(n>=1e6)return '$'+(n/1e6).toFixed(2)+'M'; if(n>=1000)return '$'+Math.round(n/1000)+'K'; return '$'+Math.round(n); }
-function ff(n){ return '$'+Math.round(n).toLocaleString(); }
-function fc(n){ if(n>=1e6)return '$'+(n/1e6).toFixed(n%1e6===0?0:2)+'M'; return '$'+Math.round(n/1000)+'K'; }
-function getOD(){ return parseInt(document.getElementById('opdays').value)||300; }
+/* ==== ASSUMPTIONS — the four editable assumptions, rendered into the panel. ===
+   basis  tag letter + word (see "Tags used on assumptions" in the methodology)
+   note   one line saying where the number comes from
+   ============================================================================ */
+const ASSUMPTIONS = [
+  { key: 'sR',   label: 'Surplus rate (P1)',            unit: '% of cost / yr',     step: 0.1,  basis: 'J · Judgment', note: 'Scaled down from the 7.9% Kemp-based ratio by the author.' },
+  { key: 'vP',   label: 'Out-of-town share (P2)',       unit: '% of daily users',   step: 0.1,  basis: 'J · Judgment', note: 'No source. Share of users assumed to travel in because of the facility.' },
+  { key: 'vS',   label: 'Direct spend per visitor-day', unit: '$ before multiplier', step: 1,    basis: 'P · Proxy',    note: 'Scaled down from $94–$133 MTB bike-park spending.' },
+  { key: 'mult', label: 'Economic multiplier (P2)',     unit: '× direct spend',     step: 0.01, basis: 'C · Cited',    note: 'OIA (2022), national outdoor recreation. May overstate a small local facility.' }
+];
 
-function climateLabel(d){
-  if(d>=340)return 'Mild climate (e.g., GA, TX, CA, FL)';
-  if(d>=300)return 'Temperate (e.g., CO, PA, OR, NC)';
-  if(d>=260)return 'Northern (e.g., MN, WI, NY, WA)';
-  return 'Cold / harsh winters (e.g., ND, MT, AK)';
+/* Order of the fields after the type/scale/days/pillars in a shared link.
+   "p" in a slot means "follow this scale's preset". Append only; never reorder,
+   or links already in circulation change meaning. */
+const HASH_KEYS = ['cost', 'users', 'sR', 'vP', 'vS', 'mult'];
+
+/* ===== END OF DATA — everything below is logic ===== */
+
+/* ---------- tuning constants ---------- */
+const HORIZON_YEARS = 20;       // length of the payback timeline and the "N-year value" metric
+const TICK_YEARS = 5;           // spacing of the timeline's tick labels
+const INFO_FRACTION = 0.5;      // direct spend at or above this share of PROXY_LOW gets an
+                                // informational note (below it, the discount is large)
+const SOFT_DOLLAR_LIMIT = 10000; // below this, big-number display shows exact dollars, not "$4K"
+const COPY_DONE_MS = 2200;      // how long "Copied!" stays on the button
+const DAYS_DEFAULT = 300;       // operating days when nothing else is said
+
+/* ---------- state ---------- */
+let cT = 'pump_track', cS = 'neighborhood', p1on = true, p2on = true;
+const ov = {};                  // key -> number the viewer typed, or null = follow preset
+HASH_KEYS.forEach(k => { ov[k] = null; });
+
+/* ---------- helpers ---------- */
+const $ = id => document.getElementById(id);
+function ff(n){ return '$' + Math.round(n).toLocaleString(); }
+// Big-number display. Small values keep exact dollars so $2,250 does not read "$2K".
+function fs(n){
+  if(!n || n <= 0) return '—';
+  if(n >= 1e6) return '$' + (n / 1e6).toFixed(2) + 'M';
+  if(n >= SOFT_DOLLAR_LIMIT) return '$' + Math.round(n / 1000) + 'K';
+  return ff(n);
+}
+function fc(n){ return n > 0 ? fs(n) : '$0'; }
+function yrs(n){ return n < 1 ? '< 1 yr' : n.toFixed(1) + ' yrs'; }
+function preset(k){ return FIELDS.find(f => f.key === k).preset(D[cT][cS]); }
+function val(k){ return ov[k] !== null ? ov[k] : preset(k); }
+function getOD(){ return parseInt($('opdays').value) || DAYS_DEFAULT; }
+function climateLabel(d){ return CLIMATES.find(c => d >= c.min).label; }
+
+/* ---------- controls ---------- */
+function buildButtons(){
+  $('type-btns').innerHTML = Object.keys(TYPE_LABELS).map(k =>
+    '<button type="button" data-t="' + k + '" onclick="setType(\'' + k + '\')">' + TYPE_LABELS[k] + '</button>').join('');
+  $('scale-btns').innerHTML = Object.keys(SCALE_LABELS).map(k =>
+    '<button type="button" data-s="' + k + '" onclick="setScale(\'' + k + '\')">' + SCALE_LABELS[k] + '</button>').join('');
+  $('assume-fields').innerHTML = ASSUMPTIONS.map(a =>
+    '<div class="afield">' +
+      '<label class="alabel" for="a-' + a.key + '">' + a.label + ' <span class="btag">' + a.basis + '</span></label>' +
+      '<div class="arowin"><input type="number" id="a-' + a.key + '" inputmode="decimal" min="0" step="' + a.step + '" oninput="onField(\'' + a.key + '\')">' +
+      '<span class="aunit">' + a.unit + '</span></div>' +
+      '<p class="hint">' + a.note + '</p><p class="hint ed" id="pn-' + a.key + '"></p></div>').join('');
+  $('bticks').innerHTML = '';
+  for(let y = 0; y <= HORIZON_YEARS; y += TICK_YEARS) $('bticks').innerHTML += '<span>' + y + (y === HORIZON_YEARS ? ' yrs' : '') + '</span>';
 }
 
 function syncSlider(){
-  const sl=document.getElementById('opdays');
-  const val=parseInt(sl.value), mn=parseInt(sl.min), mx=parseInt(sl.max);
-  const pct=((val-mn)/(mx-mn))*100;
-  sl.style.background=`linear-gradient(to right,var(--accent) ${pct}%,var(--border) ${pct}%)`;
-  document.getElementById('opdays-val').textContent=val+' days/yr';
-  document.getElementById('opdays-climate').textContent=climateLabel(val);
+  const sl = $('opdays');
+  const v = parseInt(sl.value), mn = parseInt(sl.min), mx = parseInt(sl.max);
+  const pct = ((v - mn) / (mx - mn)) * 100;
+  sl.style.background = 'linear-gradient(to right,var(--accent) ' + pct + '%,var(--border) ' + pct + '%)';
+  $('opdays-val').textContent = v + ' days/yr';
+  $('opdays-climate').textContent = climateLabel(v);
 }
-
 function updateSlider(){ syncSlider(); recalc(); }
 
-function setType(t){
-  cT=t;
-  document.querySelectorAll('[data-t]').forEach(b=>b.classList.remove('sel'));
-  document.querySelector('[data-t="'+t+'"]').classList.add('sel');
-  load();
+// Writes every input from state. Called on preset/hash/reset, never while typing,
+// so the cursor does not jump under the viewer's finger.
+function writeInputs(){
+  FIELDS.forEach(f => { $(f.id).value = val(f.key); });
+  const d = D[cT][cS];
+  $('chint').textContent = d.cH;
+  $('uhint').textContent = d.uH;
+  $('shint').textContent = d.sH;
 }
-function setScale(s){
-  cS=s;
-  document.querySelectorAll('[data-s]').forEach(b=>b.classList.remove('sel'));
-  document.querySelector('[data-s="'+s+'"]').classList.add('sel');
-  load();
+function syncButtons(){
+  document.querySelectorAll('[data-t]').forEach(b => b.classList.toggle('sel', b.dataset.t === cT));
+  document.querySelectorAll('[data-s]').forEach(b => b.classList.toggle('sel', b.dataset.s === cS));
+  [['p1', p1on], ['p2', p2on]].forEach(([id, on]) => {
+    $(id + 't').classList.toggle('on', on);
+    $(id + 't').setAttribute('aria-checked', on);
+    $(id + 'c').classList.toggle('off', !on);
+  });
 }
-function load(){
-  const d=D[cT][cS];
-  document.getElementById('cost').value =d.cost;
-  document.getElementById('users').value=d.users;
-  document.getElementById('chint').textContent=d.cH;
-  document.getElementById('uhint').textContent=d.uH;
-  document.getElementById('shint').textContent=d.sH;
-  recalc();
-}
+function syncAll(){ syncButtons(); writeInputs(); syncSlider(); recalc(); }
+
+// Switching type or scale keeps anything the viewer typed: their project cost and
+// edited assumptions are theirs; only untouched fields follow the new preset.
+function setType(t){ cT = t; syncAll(); }
+function setScale(s){ cS = s; syncAll(); }
+function resetAll(){ HASH_KEYS.forEach(k => { ov[k] = null; }); p1on = p2on = true; $('opdays').value = DAYS_DEFAULT; syncAll(); }
 function togP(id){
-  const tog=document.getElementById(id+'t'), card=document.getElementById(id+'c');
-  const on=tog.classList.toggle('on');
-  tog.setAttribute('aria-checked',on);
-  card.classList.toggle('off',!on);
-  if(id==='p1')p1on=on; else p2on=on;
+  if(id === 'p1') p1on = !p1on; else p2on = !p2on;
+  syncButtons(); recalc();
+}
+function onField(k){
+  const f = FIELDS.find(x => x.key === k);
+  let v = parseFloat($(f.id).value);
+  if(!(v >= 0)) v = 0;
+  if(v > f.max) v = f.max;
+  ov[k] = Math.abs(v - preset(k)) < 1e-9 ? null : v;
   recalc();
 }
+
+/* ---------- the model ---------- */
 function recalc(){
-  const d=D[cT][cS];
-  const cost=parseFloat(document.getElementById('cost').value)||0;
-  const usr =parseFloat(document.getElementById('users').value)||0;
-  const od  =getOD();
+  const cost = val('cost'), usr = val('users'), od = getOD();
+  const sR = val('sR') / 100, vP = val('vP') / 100, vS = val('vS'), mult = val('mult');
 
-  const p1=cost*d.sR;
-  document.getElementById('p1v').textContent=fs(p1);
-  document.getElementById('p1f').textContent=
-    fc(cost)+' \u00d7 '+(d.sR*100).toFixed(1)+'% surplus rate = '+ff(p1)+'/yr  \u00b7  scaled from Kemp $488K / $6.2M baseline';
+  const p1 = cost * sR;
+  const vdays = usr * vP * od;               // visitor-days per year; not rounded, so nothing is quantized
+  const p2 = vdays * vS * mult;
 
-  const vdays=Math.round(usr*d.vP*od);
-  const p2=vdays*d.vS*OIA;
-  document.getElementById('p2v').textContent=fs(p2);
-  document.getElementById('p2f').textContent=
-    (d.vP*100).toFixed(1)+'% of '+usr+' users \u00d7 '+od+' days = '+
-    vdays.toLocaleString()+' visitor-days/yr  \u00d7  $'+d.vS+'/day  \u00d7  1.72\u00d7  =  '+ff(p2)+'/yr';
+  $('p1v').textContent = fs(p1);
+  $('p1f').textContent = fc(cost) + ' × ' + (sR * 100).toFixed(1) + '% surplus rate = ' + ff(p1) + '/yr';
+  $('p2v').textContent = fs(p2);
+  $('p2f').textContent = (vP * 100).toFixed(1) + '% of ' + usr + ' users × ' + od + ' days = ' +
+    Math.round(vdays).toLocaleString() + ' visitor-days/yr (about ' + (usr * vP).toFixed(1) + ' per day) × $' + vS +
+    '/day direct × ' + mult + '× multiplier ($' + Math.round(vS * mult) + '/day after it) = ' + ff(p2) + '/yr';
 
-  const total=(p1on?p1:0)+(p2on?p2:0);
-  document.getElementById('stot').textContent=total>0?ff(total):'—';
+  const total = (p1on ? p1 : 0) + (p2on ? p2 : 0);
+  $('stot').textContent = total > 0 ? ff(total) : '—';
+  $('sv').textContent = total > 0 ? fs(total) : '—';
 
-  if(total>0&&cost>0){
-    const pb=cost/total, ret=Math.round((total/cost)*100);
-    document.getElementById('spb').textContent =pb<1?'< 1 yr':pb.toFixed(1)+' yrs';
-    document.getElementById('sret').textContent=ret+'%/yr';
-    const pct=Math.min(100,Math.max(0,Math.round(((20-pb)/20)*100)));
-    document.getElementById('bfill').style.width=pct+'%';
-    document.getElementById('bpct').textContent=pct+'% within 20 yrs';
+  if(total > 0 && cost > 0){
+    const pb = cost / total;
+    $('spb').textContent = yrs(pb);
+    $('sp').textContent = yrs(pb);
+    $('sret').textContent = Math.round(total / cost * 100) + '%/yr';
+    $('smult').textContent = (total * HORIZON_YEARS / cost).toFixed(1) + '×';
+    const over = pb > HORIZON_YEARS;
+    $('bfill').style.width = Math.min(100, pb / HORIZON_YEARS * 100) + '%';
+    $('bfill').classList.toggle('over', over);
+    $('bpct').textContent = over ? 'Not covered within ' + HORIZON_YEARS + ' yrs (year ' + pb.toFixed(1) + ')' : 'Covered in year ' + pb.toFixed(1);
+    $('bbar').setAttribute('aria-label', over ? 'Cost is not covered within the ' + HORIZON_YEARS + '-year timeline' : 'Cost is covered in year ' + pb.toFixed(1) + ' of ' + HORIZON_YEARS);
   } else {
-    ['spb','sret'].forEach(i=>document.getElementById(i).textContent='—');
-    document.getElementById('bfill').style.width='0%';
-    document.getElementById('bpct').textContent='—';
+    ['spb', 'sp', 'sret', 'smult'].forEach(i => { $(i).textContent = '—'; });
+    $('sv').textContent = '—';
+    $('bfill').style.width = '0%';
+    $('bfill').classList.remove('over');
+    $('bpct').textContent = '—';
   }
+  $('mult-label').textContent = HORIZON_YEARS + '-year value ÷ cost (undiscounted)';
 
-  try{
-    history.replaceState(null,'','#'+[cT,cS,
-      document.getElementById('cost').value,
-      document.getElementById('users').value,
-      od].join('-'));
-  }catch(e){}
+  // How much rests on each pillar, regardless of the toggles.
+  const both = p1 + p2;
+  $('mx1').textContent = p1 > 0 && cost > 0 ? yrs(cost / p1) + ' · ' + Math.round(p1 / both * 100) + '% of combined' : '—';
+  $('mx2').textContent = p2 > 0 && cost > 0 ? yrs(cost / p2) + ' · ' + Math.round(p2 / both * 100) + '% of combined' : '—';
+
+  syncEdited(sR, vS);
+  syncHash();
 }
 
+// Outlines edited fields, writes the "preset:" notes, the summary's custom-assumption
+// line and the checks against the published anchors.
+function syncEdited(sR, vS){
+  FIELDS.forEach(f => {
+    const edited = ov[f.key] !== null;
+    $(f.id).classList.toggle('edited', edited);
+    $('pn-' + f.key).textContent = edited ? 'Edited. Preset for this scale: ' + f.fmt(preset(f.key)) : '';
+  });
+  const changed = ASSUMPTIONS.filter(a => ov[a.key] !== null).map(a => a.label.toLowerCase());
+  $('custom').hidden = !changed.length;
+  $('custom').textContent = changed.length ? 'Custom assumptions in this result: ' + changed.join(', ') + '. Presets differ.' : '';
+
+  const flags = [];
+  if(sR > KEMP_RATE + 1e-9) flags.push(['Check', 'The surplus rate is above the ' + (KEMP_RATE * 100).toFixed(1) + '% baseline derived from Kemp (2025). The source does not support a higher rate.']);
+  if(vS >= PROXY_LOW) flags.push(['Check', 'Direct spend of $' + vS + '/day is at or above the lowest MTB benchmark ($' + PROXY_LOW + '). That is not a discount for a wheeled-sport facility.']);
+  else if(vS >= PROXY_LOW * INFO_FRACTION) flags.push(['Note', 'Direct spend of $' + vS + '/day is ' + Math.round(vS / PROXY_LOW * 100) + '% of the lowest MTB benchmark ($' + PROXY_LOW + '–$' + PROXY_HIGH + '). Expect questions about it.']);
+  $('flags').innerHTML = flags.map(f => '<li><b>' + f[0] + ':</b> ' + f[1] + '</li>').join('');
+}
+
+/* ---------- shareable state (URL hash) ----------
+   #type-scale-days-pillars-cost-users-sR-vP-vS-mult
+   pillars is "11", "10", "01" or "00" (P1, P2). A "p" means follow the preset.
+   Links made before pillars/assumptions existed (#type-scale-cost-users-days)
+   are read by their own parser branch below. */
+function hashString(){
+  const toks = HASH_KEYS.map(k => ov[k] === null ? 'p' : String(ov[k]));
+  return [cT, cS, getOD(), (p1on ? 1 : 0) + '' + (p2on ? 1 : 0)].concat(toks).join('-');
+}
+function syncHash(){ try{ history.replaceState(null, '', '#' + hashString()); }catch(e){} }
+
+const NUM = /^\d+(\.\d+)?$/;
 function parseHash(){
   try{
-    const h=window.location.hash.slice(1); if(!h)return false;
-    const[t,s,c,u,od]=h.split('-');
-    if(!D[t]||!D[t][s])return false;
-    cT=t; cS=s;
-    document.querySelectorAll('[data-t]').forEach(b=>b.classList.remove('sel'));
-    document.querySelector('[data-t="'+t+'"]').classList.add('sel');
-    document.querySelectorAll('[data-s]').forEach(b=>b.classList.remove('sel'));
-    document.querySelector('[data-s="'+s+'"]').classList.add('sel');
-    const d=D[t][s];
-    document.getElementById('cost').value =c||d.cost;
-    document.getElementById('users').value=u||d.users;
-    if(od){const v=Math.round(parseInt(od)/5)*5; document.getElementById('opdays').value=Math.min(365,Math.max(180,v));}
-    document.getElementById('chint').textContent=d.cH;
-    document.getElementById('uhint').textContent=d.uH;
-    document.getElementById('shint').textContent=d.sH;
+    const h = window.location.hash.slice(1); if(!h) return false;
+    const parts = h.split('-');
+    const t = parts[0], s = parts[1];
+    if(!D[t] || !D[t][s]) return false;
+    cT = t; cS = s;
+    HASH_KEYS.forEach(k => { ov[k] = null; });
+    p1on = p2on = true;
+    let od, rest;
+    if(parts.length >= 10 && /^[01]{2}$/.test(parts[3])){          // current format
+      od = parts[2]; p1on = parts[3][0] === '1'; p2on = parts[3][1] === '1'; rest = parts.slice(4);
+    } else {                                                        // legacy: cost-users-days
+      od = parts[4]; rest = [parts[2], parts[3]];
+    }
+    HASH_KEYS.forEach((k, i) => {
+      const tok = rest[i];
+      if(tok && NUM.test(tok)){
+        const f = FIELDS.find(x => x.key === k);
+        const v = Math.min(f.max, parseFloat(tok));
+        ov[k] = Math.abs(v - preset(k)) < 1e-9 ? null : v;
+      }
+    });
+    if(od && NUM.test(od)){ const v = Math.round(parseInt(od) / 5) * 5; $('opdays').value = Math.min(365, Math.max(180, v)); }
     return true;
-  }catch(e){return false;}
+  }catch(e){ return false; }
 }
 
+/* ---------- share / print ---------- */
+function copyText(text){
+  // Three paths, in order of preference. The async clipboard needs the wrapper's
+  // allow="clipboard-write"; a Pinkbike embed has no such grant, so the old
+  // execCommand path stays: it is the only one that works with no permission policy.
+  return new Promise((resolve, reject) => {
+    const legacy = () => {
+      try{
+        const ta = document.createElement('textarea');
+        ta.value = text; ta.setAttribute('readonly', ''); ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0';
+        document.body.appendChild(ta); ta.select();
+        const ok = document.execCommand('copy'); document.body.removeChild(ta);
+        ok ? resolve() : reject();
+      }catch(e){ reject(e); }
+    };
+    if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(resolve).catch(legacy);
+    else legacy();
+  });
+}
 function doLink(){
-  const c=document.getElementById('cost').value, u=document.getElementById('users').value;
-  const url=window.location.href.split('#')[0]+'#'+[cT,cS,c,u,getOD()].join('-');
-  const btn=document.getElementById('lbtn'), orig=btn.innerHTML;
-  const done=()=>{btn.textContent='✓ Copied!'; setTimeout(()=>btn.innerHTML=orig,2200);};
-  if(navigator.clipboard){navigator.clipboard.writeText(url).then(done).catch(()=>prompt('Copy this link:',url));}
-  else prompt('Copy this link:',url);
+  const url = SHARE_BASE + '#' + hashString();
+  const btn = $('lbtn'), orig = btn.innerHTML;
+  copyText(url).then(() => {
+    btn.textContent = '✓ Copied!'; setTimeout(() => { btn.innerHTML = orig; }, COPY_DONE_MS);
+  }).catch(() => { try{ prompt('Copy this link:', url); }catch(e){} });
 }
 
-function doPrint(){ window.print(); }
+let assumeWasOpen = true;
+function printPrepare(){
+  assumeWasOpen = $('assume').open;
+  $('assume').open = true;                    // a closed <details> prints as nothing
+  $('printmeta').textContent = 'Scenario: ' + TYPE_LABELS[cT] + ', ' + SCALE_LABELS[cS].toLowerCase() + ' scale, ' + getOD() +
+    ' operating days/yr. Pillars included: ' + [p1on ? 'P1' : '', p2on ? 'P2' : ''].filter(Boolean).join(' + ') + '. Generated ' +
+    new Date().toLocaleDateString() + ' from ' + SHARE_BASE + '. Planning-level estimate, not investment advice or a certified economic analysis.';
+}
+function printRestore(){ $('assume').open = assumeWasOpen; }
+// window.print() is wrapped because a frame whose embedder forbids dialogs does nothing and says nothing.
+function doPrint(){ try{ window.print(); }catch(e){} }
+window.addEventListener('beforeprint', printPrepare);
+window.addEventListener('afterprint', printRestore);
+try{   // Safari fires only the media-query change
+  const mq = window.matchMedia('print');
+  const onMq = e => { e.matches ? printPrepare() : printRestore(); };
+  mq.addEventListener ? mq.addEventListener('change', onMq) : mq.addListener(onMq);
+}catch(e){}
 
-if(!parseHash())load(); else recalc();
-syncSlider();
+/* ---------- iframe bridge: the outer page's hash cannot be read from in here ---------- */
+window.addEventListener('message', e => {
+  if(!PMR_ORIGINS.includes(e.origin)) return;
+  if(!e.data || e.data.type !== 'pmr-hash' || typeof e.data.hash !== 'string') return;
+  const h = e.data.hash.replace(/^#/, '');
+  if(!h) return;
+  try{ history.replaceState(null, '', '#' + h); }catch(err){}
+  if(parseHash()) syncAll();
+});
+window.addEventListener('hashchange', () => { if(parseHash()) syncAll(); });
+
+/* ---------- init ---------- */
+buildButtons();
+parseHash();
+syncAll();
 </script>
 </body>
 </html>
