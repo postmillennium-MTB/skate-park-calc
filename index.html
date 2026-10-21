@@ -209,6 +209,10 @@
     .direct { font-size: 12px; color: var(--t2); margin: -6px 0 14px; }
     .direct b { font-family: var(--mono); font-weight: 500; color: var(--t1); }
     .pmetrics { margin: 4px 0 14px; }
+    .gain { font-size: 12px; color: var(--t2); line-height: 1.65; margin-bottom: 10px; }
+    .gain strong { color: var(--t1); }
+    .perday { font-size: 12px; color: var(--t2); line-height: 1.65; margin-bottom: 14px; padding-left: 10px; border-left: 2px solid var(--accent); }
+    .perday b { font-family: var(--mono); font-weight: 500; color: var(--t1); }
     .barrow { display: flex; justify-content: space-between; gap: 10px; font-family: var(--mono); font-size: 10px; color: var(--t3); margin-bottom: 6px; }
     .barbg { height: 8px; background: var(--edge); border-radius: 4px; overflow: hidden; }
     .barfill { height: 100%; background: var(--accent); border-radius: 4px; transition: width 0.45s ease; width: 0%; }
@@ -279,7 +283,7 @@
       .barfill.over { background: #b45309 !important; }
       h1 { color: #111 !important; }
       h1 span, .eyebrow { color: #1d4ed8 !important; }
-      .intro, .pform, .psrc, .mtext, .mname, .hint, .assume-lead, .alabel, .aunit, .ssub, .mlabel, .bticks, .barrow, .bnote, .disclaimer, .flags li, .psrc strong, .mtext strong, .disclaimer strong, .direct, .direct b, .more > summary { color: #333 !important; }
+      .intro, .pform, .psrc, .gain, .gain strong, .perday, .perday b, .mtext, .mname, .hint, .assume-lead, .alabel, .aunit, .ssub, .mlabel, .bticks, .barrow, .bnote, .disclaimer, .flags li, .psrc strong, .mtext strong, .disclaimer strong, .direct, .direct b, .more > summary { color: #333 !important; }
       .psrc a, .mtext a, .bench .blinks a { color: #1d4ed8 !important; }
       .bench li, .bench .bfig, .bench .bcav { color: #333 !important; }
       .badge.b { background: #dbeafe !important; color: #1e40af !important; }
@@ -393,6 +397,8 @@
         <div class="pbody">
           <div class="pval" id="p1v">—</div>
           <div class="pform" id="p1f"></div>
+          <p class="gain"><strong>What users gain:</strong> the dollar value riders place on having this facility, beyond what it costs them to get there. No one receives this money. It&rsquo;s an estimate of benefit, from one study of one large skatepark.</p>
+          <p class="perday" id="p1d"></p>
           <div class="pmetrics" id="p1-m"></div>
           <div class="psrc">
             <strong>Informed by</strong> Kemp (2025), a study of one 88,000 sq ft skatepark
@@ -514,6 +520,7 @@ const PMR_ORIGINS = ['https://www.postmillenniumrenaissance.com', 'https://postm
 
 const MULT_DEFAULT = 1.72;            // a starting point, adjustable. Once attributed to OIA (2022); that could not be verified
 const KEMP_SURPLUS = 488000;          // $/yr, Kemp (2025), adults only
+const KEMP_PER_DAY = 61;              // $ per adult user-day at Lauridsen, Kemp (2025); shown beside P1's per-user-day check
 const KEMP_COST = 6200000;            // $, this tool's ratio denominator: press reports, NOT in Kemp
 const KEMP_RATE = KEMP_SURPLUS / KEMP_COST;   // 7.87%; a rate above this has no support in the source
 /* ==== BENCHMARKS — the four mountain bike trail studies P2's spend values are
@@ -792,6 +799,13 @@ function recalc(){
     Math.round(vdays).toLocaleString() + ' visitor-days/yr (about ' + (usr * vP).toFixed(1) + ' per day) \u00d7 $' + vS +
     '/day direct \u00d7 ' + mult + '\u00d7 multiplier ($' + Math.round(vS * mult) + '/day after it) = ' + ff(p2) + '/yr';
 
+  // Sanity check: P1 per user-day against Kemp's $61. This tool deliberately claims far
+  // less per rider, because P1 is tied to cost, not to visits.
+  const userDays = usr * od;
+  $('p1d').innerHTML = p1 > 0 && userDays > 0
+    ? 'Per rider, that is about <b>$' + (p1 / userDays).toFixed(2) + '</b> per user-day (P1 \u00f7 users \u00d7 operating days). Kemp measured <b>$' + KEMP_PER_DAY + '</b> per adult user-day at one destination skatepark; this tool claims far less per rider.' +
+      (p1 / userDays >= KEMP_PER_DAY ? ' <b>Check:</b> this is at or above Kemp\u2019s figure, which the source does not support for a typical facility.' : '')
+    : '';
   fillMetrics('p1', p1, cost);
   fillMetrics('p2', p2, cost);
   $('sv1').textContent = fs(p1);
