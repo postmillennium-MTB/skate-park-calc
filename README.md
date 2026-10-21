@@ -63,6 +63,33 @@ Annual surplus rates applied in the calculator range from 3.0% to 7.2%, all set 
 
 **P1 is driven by construction cost, not daily user count or operating days.** Those two inputs affect Pillar 2 only, and the page tags them "P2 input".
 
+### What "what users gain" means
+
+P1 is **consumer surplus**: the dollar value riders place on having the facility, over and above what it costs them to get there and use it. Nobody receives this money. It is value, not cash.
+
+**The mechanism.** Say a skater would gladly pay $80 for a session and spends $19 in gas and time to get there. The $61 gap is their surplus, and $61 is Kemp's per-adult-user-day figure. Kemp measured it with a travel-cost model: people who live farther away pay more to come, and they come less often. That distance-versus-visits pattern traces out a demand curve for a facility that charges nothing, and the area under the curve, above what people actually paid, is the surplus. Because the park is free, the value people get is large relative to the revenue it brings in, which is why economists use surplus to price public recreation: it is the standard way to put a dollar figure on a free public good.
+
+**How P1 differs from P2**
+
+- P2 is money that changes hands in the local economy.
+- P1 is value experienced by the rider. A rider who lives next door and spends nothing adds nothing to P2, but still gains from the facility.
+- In a benefit-cost analysis, P1 is the benefit. Visitor spending would normally be a transfer, which is why the page shows the two separately.
+
+**What P1 leaves out:** youth users (Kemp counts adults only); health, safety and property effects; and value to people who never ride (neighbors, parents).
+
+**The gap between Kemp and this tool.** The tool does not estimate surplus per rider. It takes Kemp's $488K a year, divides by the park's $6.2M cost to get 7.9%, scales that down by judgment, and multiplies by the construction cost entered. So "what users gain" on the page is really "an annual user benefit tied to the cost, anchored to one study."
+
+Dividing P1 by users × operating days shows how conservative that is:
+
+| Facility | P1 per user-day |
+|---|---|
+| Neighborhood pump track | about $0.30 |
+| Regional skatepark | about $1.26 |
+| Destination skatepark | about $1.92 |
+| Kemp's Lauridsen result | $61 |
+
+(Preset values, 300 operating days. For example, the regional skatepark is $30,250 ÷ (80 users × 300 days) = $1.26.) The comparison is not apples to apples: Lauridsen draws destination travelers, and by the travel-cost method local users generate little surplus. But it shows that the page is not claiming Kemp-sized value per rider.
+
 ### Limitation
 
 The Kemp (2025) Lauridsen study is the *only* peer-reviewed TCM analysis of a public skatepark. Applying its framework to pump tracks and wheel parks requires analogy by facility type — no direct TCM study of pump tracks exists. The page now states this beside P1 (badge: **A · Anchored, rates assumed**). The old "High confidence" badge overstated it: only the single Kemp figure is anchored, and the scaling to nine presets is assumed.
@@ -236,6 +263,7 @@ The faster payback for pump tracks vs. skateparks at equivalent scale comes from
 - Checks under the assumptions: a rate above the Kemp-based 7.9%; direct spend at or above, or at half or more of, the lowest per-day MTB figure in the Ledger ($90).
 - Payback on a 20-year timeline, replacing the earlier "value recovery progress" bar, which showed the *remaining* share of 20 years after payback and read as progress.
 - **Copy link** always writes the canonical `https://www.postmillenniumrenaissance.com/pump-track/#…` address and carries the pillar toggles and any edited assumptions. Format: `#type-scale-days-pillars-cost-users-sR-vP-vS-mult-combined`, where `pillars` is `11`, `10`, `01` or `00` (which pillars are shown), `p` means "follow the preset", and `combined` is `1` when the combined total is shown (absent means off). Links in the earlier formats (`#type-scale-cost-users-days`, and the same without `combined`) still open.
+- Two buttons at the top, both with the Lucide `square-chevron-left` icon and `target="_top"`: Post Millennium Renaissance (home) and Trail Investment ROI Calculator (`/roi/`). The "Related tool" block at the bottom stays. Both are hidden in print.
 - Print includes the assumptions, the pillars shown, the date, and a planning-estimate notice.
 
 ## Verification status (2026-10-21)
