@@ -224,6 +224,7 @@ The faster payback for pump tracks vs. skateparks at equivalent scale comes from
 | Item | Status |
 |---|---|
 | Kemp (2025): ~$488K/yr, $61/adult user-day | Read on the publisher's abstract page |
+| Kemp article link (anserpress.org), press link (spaskateparks.com), author profile (uwec.edu/profiles/kempta) | Confirmed working by Jon, 2026-10-21 |
 | Kemp: $6.2M cost | **Not in the abstract.** Press: $6.1M expected / $6.3M funding goal (2019); links from search results, not opened |
 | Kemp: size, sample, dollar year | Not stated in the abstract |
 | Whistler $94–$133 per visitor-day | Not verified; cited via NW Arkansas studies |
@@ -233,6 +234,10 @@ The faster payback for pump tracks vs. skateparks at equivalent scale comes from
 | Wishaw pump track 55% crime reduction | Not used by the tool; primary report not verified |
 
 ## Complete Source List
+
+**Author profile (Kemp, UW–Eau Claire):**
+
+https://www.uwec.edu/profiles/kempta
 
 **Press coverage of Kemp (2025):**
 
